@@ -3,6 +3,8 @@ package com.chen.telbook.net;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.chen.libchen.Logger;
+
 import java.io.IOException;
 import java.util.Map;
 
@@ -44,11 +46,14 @@ public class BaseRequest {
         mcall.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                Logger.d("onFailure");
+
                 callBack(callback, call, null, e);
             }
 
             @Override
             public void onResponse(Call call, Response response) {
+                Logger.d("onResponse");
                 callBack(callback, call, response, null);
             }
         });
@@ -80,6 +85,7 @@ public class BaseRequest {
     }
 
     private void callBack(final NetCallback callback, Call call, final Response response, final Exception e) {
+        Logger.d("callBack");
         new AsyncTask<Call, Void, Void>() {
 
             @Override
@@ -89,11 +95,15 @@ public class BaseRequest {
 
             @Override
             protected void onPostExecute(Void aVoid) {
+                Logger.d("callBack1");
                 if (response != null) {
+                    Logger.d("callBack2");
                     try {
                         String str = response.body().string();
                         callback.onResponse(str);
+                        Logger.d("callBack3");
                     } catch (IOException e1) {
+                        Logger.d("callBack4");
                         callback.onFailure(e1);
                     }
                 } else if (e != null) {

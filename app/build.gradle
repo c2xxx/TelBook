@@ -12,10 +12,23 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+    //签名信息
+    signingConfigs {
+        myConfig {
+            storeFile file("android.keystore")
+            storePassword "android"
+            keyAlias "android.keystore"
+            keyPassword "android"
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.myConfig
+        }
+        debug{
+            signingConfig signingConfigs.myConfig
         }
     }
 }
@@ -33,4 +46,5 @@ dependencies {
     compile 'com.jakewharton:butterknife:8.0.1'
     apt 'com.jakewharton:butterknife-compiler:8.0.1'
     compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile project(':libchen')
 }
