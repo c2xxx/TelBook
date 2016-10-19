@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.chen.telbook.R;
 import com.chen.telbook.bean.TelNum;
-import com.chen.telbook.utils.ImageLoader;
+import com.chen.telbook.utils.ImageGlide;
 
 import java.util.List;
 
@@ -35,8 +35,12 @@ public class TelNumAdapter extends RecyclerView.Adapter<TelNumAdapter.ViewHolder
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = View.inflate(parent.getContext(), R.layout.item_telnum, null);
+        View view = View.inflate(parent.getContext(), getItem_telnum(), null);
         return new ViewHolder(view);
+    }
+
+    protected int getItem_telnum() {
+        return R.layout.item_telnum;
     }
 
     @Override
@@ -77,7 +81,7 @@ public class TelNumAdapter extends RecyclerView.Adapter<TelNumAdapter.ViewHolder
             if (imgUrl.indexOf("?") == -1) {
                 imgUrl = imgUrl + "?imageView2/2/w/300/h/300/q/100";
             }
-            ImageLoader.show(mContext, imgUrl, ivImg);
+            ImageGlide.show(mContext, imgUrl, ivImg);
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {

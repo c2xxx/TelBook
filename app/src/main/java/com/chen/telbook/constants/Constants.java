@@ -5,5 +5,6 @@ package com.chen.telbook.constants;
  */
 
 public class Constants {
-    public static final String urlXml = "http://7xshon.com2.z0.glb.clouddn.com/telbook.xml";
+    public static final String HOST =   "http://7xsiih.com2.z0.glb.clouddn.com/";
+    public static final String urlXml = HOST+"telbook.xml";
 }

@@ -9,7 +9,7 @@ import com.bumptech.glide.Glide;
  * Created by hui on 2016/10/8.
  */
 
-public class ImageLoader {
+public class ImageGlide {
     public static void show(Context context, String url, ImageView imageView) {
         Glide.with(context).load(url).into(imageView);
     }
