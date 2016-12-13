@@ -13,7 +13,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Base64;
-import android.util.Xml;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -31,10 +30,7 @@ import com.chen.telbook.helper.TokenHelper;
 import com.chen.telbook.net.BaseRequest;
 import com.chen.telbook.net.NetCallback;
 
-import org.xmlpull.v1.XmlPullParser;
-
 import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
@@ -151,53 +147,6 @@ public class MainActivity extends BaseActivity {
     }
 
 
-//    public List<TelNum> parse(String xmlString) throws Exception {
-//        List<TelNum> list = null;
-//        TelNum telNum = null;
-//        XmlPullParser parser = Xml.newPullParser();    //由android.util.Xml创建一个XmlPullParser实例
-//        ByteArrayInputStream tInputStringStream = new ByteArrayInputStream(xmlString.getBytes());
-//        parser.setInput(tInputStringStream, "UTF-8");                //设置输入流 并指明编码方式
-//
-//        int eventType = parser.getEventType();
-//        while (eventType != XmlPullParser.END_DOCUMENT) {
-//            switch (eventType) {
-//                case XmlPullParser.START_DOCUMENT:
-////                    LogController.d("START_DOCUMENT");
-//                    list = new ArrayList<>();
-//                    break;
-//                case XmlPullParser.START_TAG:
-////                    LogController.d("START_TAG");
-//                    if (parser.getName().equals("tel")) {
-//                        telNum = new TelNum();
-//                    } else if (parser.getName().equals("name")) {
-//                        parser.next();
-//                        telNum.setName(parser.getText());
-//                    } else if (parser.getName().equals("phonenumber")) {
-//                        parser.next();
-//                        String phonenumber = parser.getText();
-//                        if (phonenumber != null && phonenumber.length() == 11) {
-//                            phonenumber = phonenumber.substring(0, 3) + " " + phonenumber.substring(3, 7) + " " + phonenumber.substring(7, 11);
-//                        }
-//
-//                        telNum.setTel(phonenumber);
-//                    } else if (parser.getName().equals("photo")) {
-//                        parser.next();
-//                        telNum.setImg(parser.getText());
-//                    }
-//                    break;
-//                case XmlPullParser.END_TAG:
-////                    LogController.d("END_TAG");
-//                    if (parser.getName().equals("tel")) {
-//                        list.add(telNum);
-//                        telNum = null;
-//                    }
-//                    break;
-//            }
-//            eventType = parser.next();
-//        }
-//        return list;
-//    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         /*
@@ -221,33 +170,47 @@ public class MainActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
         final EditText et = new EditText(this);
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle("请输入123，进入管理")
+        boolean needPwd = false;
+        if (needPwd) {
+            AlertDialog dialog = new AlertDialog.Builder(this)
+                    .setTitle("请输入123，进入管理")
 //                .setIcon(R.drawable.ic_launcher)
-                .setView(et)
-                //相当于点击确认按钮
-                .setNegativeButton("取消", null)
-                .setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (!"123".equals(et.getText().toString().trim())) {
-                            ToastUtil.show("输入错误！");
-                            return;
+                    .setView(et)
+                    //相当于点击确认按钮
+                    .setNegativeButton("取消", null)
+                    .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (!"123".equals(et.getText().toString().trim())) {
+                                ToastUtil.show("输入错误！");
+                                return;
+                            }
+                            switch (item.getItemId()) {
+                                case Menu.FIRST + 1:
+                                    Intent intent = new Intent(MainActivity.this, AddTelphoneNumberActivity.class);
+                                    startActivityForResult(intent, REQUEST_ADD);
+                                    break;
+                                case Menu.FIRST + 2:
+                                    Intent intent2 = new Intent(MainActivity.this, TelephoneDeleteActivity.class);
+                                    startActivityForResult(intent2, REQUEST_DELETE);
+                                    break;
+                            }
                         }
-                        switch (item.getItemId()) {
-                            case Menu.FIRST + 1:
-                                Intent intent = new Intent(MainActivity.this, AddTelphoneNumberActivity.class);
-                                startActivityForResult(intent, REQUEST_ADD);
-                                break;
-                            case Menu.FIRST + 2:
-                                Intent intent2 = new Intent(MainActivity.this, TelephoneDeleteActivity.class);
-                                startActivityForResult(intent2, REQUEST_DELETE);
-                                break;
-                        }
-                    }
-                }).create();
-        dialog.setCancelable(true);
-        dialog.setCanceledOnTouchOutside(true);
-        dialog.show();
+                    }).create();
+            dialog.setCancelable(true);
+            dialog.setCanceledOnTouchOutside(true);
+            dialog.show();
+        } else {
+            switch (item.getItemId()) {
+                case Menu.FIRST + 1:
+                    Intent intent = new Intent(MainActivity.this, AddTelphoneNumberActivity.class);
+                    startActivityForResult(intent, REQUEST_ADD);
+                    break;
+                case Menu.FIRST + 2:
+                    Intent intent2 = new Intent(MainActivity.this, TelephoneDeleteActivity.class);
+                    startActivityForResult(intent2, REQUEST_DELETE);
+                    break;
+            }
+        }
         return false;
     }
 
