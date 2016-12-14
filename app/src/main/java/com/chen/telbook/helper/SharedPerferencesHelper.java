@@ -14,6 +14,7 @@ import com.chen.telbook.MyApplication;
  * Created by hui on 2016/2/29.
  */
 public class SharedPerferencesHelper {
+    public static final String USER_NAME = "USER_NAME";
     private static SharedPreferences sp;
 
     public static void save(String key, String value) {

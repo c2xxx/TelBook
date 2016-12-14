@@ -47,6 +47,7 @@ public class BaseRequest {
         requestBuilder.method("GET", null);
         Request request = requestBuilder.build();
         Call mcall = mOkHttpClient.newCall(request);
+
         mcall.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {

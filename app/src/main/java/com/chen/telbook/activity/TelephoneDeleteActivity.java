@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.util.Base64;
 
 import com.chen.libchen.Logger;
+import com.chen.libchen.ToastUtil;
 import com.chen.telbook.R;
 import com.chen.telbook.adapter.TelNumAdapter;
 import com.chen.telbook.bean.TelNum;
@@ -48,28 +49,16 @@ public class TelephoneDeleteActivity extends BaseActivity {
 
     protected void initViews() {
         setTitle("删除联系人");
-//        listview = (ListView) findViewById(R.id.listview);
-//        listview.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-//            @Override
-//            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                TelNum telNum = telList.get(i);
-//                doDelete(telNum);
-//                return false;
-//            }
-//        });
     }
 
     /**
      * @param telNum
      */
     private void doDelete(final TelNum telNum) {
-//        ToastUtil.show("删除" + telNum.getName());
         AlertDialog.Builder dialog = new AlertDialog.Builder(this)
                 .setTitle("删除对话框")
-//                .setIcon(R.drawable.ic_launcher)
                 .setCancelable(true)
                 .setMessage("确认删除" + telNum.getName() + "吗？")
-                //相当于点击确认按钮
                 .setNegativeButton("取消", null)
                 .setPositiveButton("确认", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
@@ -100,36 +89,25 @@ public class TelephoneDeleteActivity extends BaseActivity {
         });
         //设置布局管理器
         rvMain.setLayoutManager(new LinearLayoutManager(this));
-//设置adapter
+        //设置adapter
         rvMain.setAdapter(telAdapter);
-//设置Item增加、移除动画
+        //设置Item增加、移除动画
         rvMain.setItemAnimator(new DefaultItemAnimator());
     }
-//
-//    private class TelNumDeleteAdapter extends TelNumAdapter {
-//        public TelNumDeleteAdapter(Context mContext, List<TelNum> mList) {
-//            super(mContext, mList);
-//        }
-//
-//        @Override
-//        protected int getItem_telnum() {
-//            return R.layout.item_telnum_delete;
-//        }
-//    }
 
 
     /**
      * 加载本地数据
      */
     private void loadLocolData() {
-        String strBase64 = SharedPerferencesHelper.read(MainActivity.TELPHONEBOOK);
+        String strBase64 = SharedPerferencesHelper.read(MainActivity.TEL_PHONE_BOOK);
         if (TextUtils.isEmpty(strBase64)) {
             List<TelNum> list = new ArrayList<>();
-            TelNum telNum = new TelNum();
-            telNum.setImg("");
-            telNum.setName("陈辉");
-            telNum.setTel("15659002326");
-            list.add(telNum);
+//            TelNum telNum = new TelNum();
+//            telNum.setImg("");
+//            telNum.setName("陈辉");
+//            telNum.setTel("15659002326");
+//            list.add(telNum);
             telAdapter.setData(list);
         } else {
             String strResult = new String(Base64.decode(strBase64, Base64.DEFAULT));
@@ -155,7 +133,7 @@ public class TelephoneDeleteActivity extends BaseActivity {
                 try {
                     List<TelNum> list = TelBookXmlHelper.parse(response);
                     if (list != null && !list.isEmpty()) {
-                        SharedPerferencesHelper.save(MainActivity.TELPHONEBOOK, strBase64);
+                        SharedPerferencesHelper.save(MainActivity.TEL_PHONE_BOOK, strBase64);
                         telAdapter.setData(list);
                     }
                 } catch (Exception e) {
@@ -165,6 +143,7 @@ public class TelephoneDeleteActivity extends BaseActivity {
 
             @Override
             public void onFailure(Exception e) {
+                ToastUtil.show("加载数据失败，请检查网络");
             }
         };
         BaseRequest.getInstance().get(url, null, callback);

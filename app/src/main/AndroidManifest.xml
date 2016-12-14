@@ -41,6 +41,7 @@
         </activity>
         <activity android:name=".activity.AddTelphoneNumberActivity" />
         <activity android:name=".activity.TelephoneDeleteActivity" />
+        <activity android:name=".activity.ReNameActivity" />
     </application>
 
 </manifest>

@@ -195,7 +195,7 @@ public class AddTelphoneNumberActivity extends BaseActivity implements View.OnCl
                             Logger.d(mini.getPath());
                             Logger.d("压缩后图片大小：" + mini.length() / 1024 + " K " + mini.getPath());
 
-                            String key = "pic_" + System.currentTimeMillis() + getExtension(targetName);
+                            String key = "pic_" + Constants.USER_NAME + "_" + System.currentTimeMillis() + getExtension(targetName);
                             String token = getToken(key);
                             if (token == null) {
                                 ToastUtil.show("获取token失败");
