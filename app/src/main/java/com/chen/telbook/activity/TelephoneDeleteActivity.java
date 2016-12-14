@@ -100,7 +100,7 @@ public class TelephoneDeleteActivity extends BaseActivity {
      * 加载本地数据
      */
     private void loadLocolData() {
-        String strBase64 = SharedPerferencesHelper.read(MainActivity.TEL_PHONE_BOOK);
+        String strBase64 = SharedPerferencesHelper.read(SharedPerferencesHelper.TEL_PHONE_BOOK);
         if (TextUtils.isEmpty(strBase64)) {
             List<TelNum> list = new ArrayList<>();
 //            TelNum telNum = new TelNum();
@@ -133,7 +133,7 @@ public class TelephoneDeleteActivity extends BaseActivity {
                 try {
                     List<TelNum> list = TelBookXmlHelper.parse(response);
                     if (list != null && !list.isEmpty()) {
-                        SharedPerferencesHelper.save(MainActivity.TEL_PHONE_BOOK, strBase64);
+                        SharedPerferencesHelper.save(SharedPerferencesHelper.TEL_PHONE_BOOK, strBase64);
                         telAdapter.setData(list);
                     }
                 } catch (Exception e) {

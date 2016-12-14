@@ -20,8 +20,9 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <!--允许程序改变网络连接状态 -->
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
-    <!--读取联系人权限，上传联系人需要用到此权限 -->
+    <!--读取联系人权限，读取联系人需要用到此权限 -->
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
     <!--科大讯飞   end-->
 
 
@@ -42,6 +43,7 @@
         <activity android:name=".activity.AddTelphoneNumberActivity" />
         <activity android:name=".activity.TelephoneDeleteActivity" />
         <activity android:name=".activity.ReNameActivity" />
+        <activity android:name=".activity.CallLogActivity" />
     </application>
 
 </manifest>

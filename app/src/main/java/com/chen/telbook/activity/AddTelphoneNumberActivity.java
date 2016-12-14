@@ -218,17 +218,6 @@ public class AddTelphoneNumberActivity extends BaseActivity implements View.OnCl
 //        ToastUtil.show("正在上传图片");
     }
 
-    /**
-     * 将Drawable转化为Bitmap
-     *
-     * @param drawable
-     * @return
-     */
-    public Bitmap drawableToBitmap(Drawable drawable) {
-        if (drawable == null)
-            return null;
-        return ((BitmapDrawable) drawable).getBitmap();
-    }
 
     /**
      * 将Bitmap以指定格式保存到指定路径

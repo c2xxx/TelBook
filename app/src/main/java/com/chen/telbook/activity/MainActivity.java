@@ -42,7 +42,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends BaseActivity {
-    public static final String TEL_PHONE_BOOK = "TEL_PHONE_BOOK";
+//    public static final String TEL_PHONE_BOOK = "TEL_PHONE_BOOK";
     private static final int REQUEST_ADD = 1;
     private static final int REQUEST_DELETE = 2;
     private static final int REQUEST_RENAME = 3;
@@ -51,6 +51,7 @@ public class MainActivity extends BaseActivity {
 
     private TelNumAdapter telAdapter;
     private List<TelNum> telList = new ArrayList<>();
+    private long lastReadTime = System.currentTimeMillis();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +59,7 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         initData();
+        startActivity(new Intent(this, CallLogActivity.class));
     }
 
     private void initData() {
@@ -86,12 +88,13 @@ public class MainActivity extends BaseActivity {
         NetCallback callback = new NetCallback() {
             @Override
             public void onResponse(String response) {
+                lastReadTime = System.currentTimeMillis();
                 Logger.d("   " + response);
                 String strBase64 = Base64.encodeToString(response.getBytes(), Base64.DEFAULT);
                 try {
                     List<TelNum> list = TelBookXmlHelper.parse(response);
                     if (list != null && !list.isEmpty()) {
-                        SharedPerferencesHelper.save(TEL_PHONE_BOOK, strBase64);
+                        SharedPerferencesHelper.save(SharedPerferencesHelper.TEL_PHONE_BOOK, strBase64);
                         telAdapter.setData(list);
                     }
                 } catch (Exception e) {
@@ -128,7 +131,7 @@ public class MainActivity extends BaseActivity {
      * 加载本地数据
      */
     private void loadLocolData() {
-        String strBase64 = SharedPerferencesHelper.read(TEL_PHONE_BOOK);
+        String strBase64 = SharedPerferencesHelper.read(SharedPerferencesHelper.TEL_PHONE_BOOK);
         if (TextUtils.isEmpty(strBase64)) {
             List<TelNum> list = new ArrayList<>();
 //            TelNum telNum = new TelNum();
@@ -218,6 +221,10 @@ public class MainActivity extends BaseActivity {
             Intent intent3 = new Intent(MainActivity.this, ReNameActivity.class);
             startActivityForResult(intent3, REQUEST_RENAME);
         }
+
+        if (System.currentTimeMillis() - lastReadTime > 60 * 1000 * 3) {
+            loadRemoteData();
+        }
     }
 
     @Override
@@ -260,7 +267,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void clearCurrentData() {
-        SharedPerferencesHelper.save(TEL_PHONE_BOOK, "");
+        SharedPerferencesHelper.save(SharedPerferencesHelper.TEL_PHONE_BOOK, "");
         telAdapter.setData(new ArrayList<TelNum>());
     }
 

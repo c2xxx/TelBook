@@ -4,28 +4,9 @@ package com.chen.telbook.bean;
  * Created by hui on 2016/2/22.
  */
 public class TelNum {
-    //    private int id;
-    private String name;
-    private String tel;
-    private String img;
-    private boolean isSelected;
-
-
-    public boolean isSelected() {
-        return isSelected;
-    }
-
-    public void setSelected(boolean selected) {
-        isSelected = selected;
-    }
-//
-//    public int getId() {
-//        return id;
-//    }
-//
-//    public void setId(int id) {
-//        this.id = id;
-//    }
+    protected String name;
+    protected String tel;
+    protected String img;
 
     public String getName() {
         return name;

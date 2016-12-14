@@ -15,6 +15,7 @@ import com.chen.telbook.MyApplication;
  */
 public class SharedPerferencesHelper {
     public static final String USER_NAME = "USER_NAME";
+    public static final String TEL_PHONE_BOOK = "TEL_PHONE_BOOK";
     private static SharedPreferences sp;
 
     public static void save(String key, String value) {

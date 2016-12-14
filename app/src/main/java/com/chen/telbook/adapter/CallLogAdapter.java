@@ -1,6 +1,7 @@
 package com.chen.telbook.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
@@ -8,10 +9,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.chen.libchen.Logger;
 import com.chen.telbook.R;
-import com.chen.telbook.bean.TelNum;
+import com.chen.telbook.bean.CallLog;
 import com.chen.telbook.utils.ImageGlide;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -19,17 +22,17 @@ import java.util.List;
  * Created by hui on 2016/10/6.
  */
 
-public class TelNumAdapter extends RecyclerView.Adapter<TelNumAdapter.ViewHolder> {
+public class CallLogAdapter extends RecyclerView.Adapter<CallLogAdapter.ViewHolder> {
 
     private Context mContext;
-    private List<TelNum> list;
+    private List<CallLog> list;
     private OnItemClick onItemClick;
 
     public void setOnItemClick(OnItemClick onItemClick) {
         this.onItemClick = onItemClick;
     }
 
-    public TelNumAdapter(Context mContext, List<TelNum> list) {
+    public CallLogAdapter(Context mContext, List<CallLog> list) {
         this.mContext = mContext;
         this.list = list;
     }
@@ -41,7 +44,7 @@ public class TelNumAdapter extends RecyclerView.Adapter<TelNumAdapter.ViewHolder
     }
 
     protected int getItem_telnum() {
-        return R.layout.item_telnum;
+        return R.layout.item_call_log;
     }
 
     @Override
@@ -51,10 +54,11 @@ public class TelNumAdapter extends RecyclerView.Adapter<TelNumAdapter.ViewHolder
 
     @Override
     public int getItemCount() {
+        Logger.d("itemCount=" + list.size());
         return list.size();
     }
 
-    public void setData(List<TelNum> telList) {
+    public void setData(List<CallLog> telList) {
         if (telList != null) {
             this.list.clear();
             this.list.addAll(telList);
@@ -66,15 +70,21 @@ public class TelNumAdapter extends RecyclerView.Adapter<TelNumAdapter.ViewHolder
         private ImageView ivImg;
         private TextView tvName;
         private TextView tvTel;
+        private TextView tvTime;
+        private TextView tvType;
+        private TextView tvDuring;
 
         public ViewHolder(View itemView) {
             super(itemView);
             ivImg = (ImageView) itemView.findViewById(R.id.ivImg);
             tvName = (TextView) itemView.findViewById(R.id.tvName);
             tvTel = (TextView) itemView.findViewById(R.id.tvTel);
+            tvTime = (TextView) itemView.findViewById(R.id.tvTime);
+            tvType = (TextView) itemView.findViewById(R.id.tvType);
+            tvDuring = (TextView) itemView.findViewById(R.id.tvDuring);
         }
 
-        public void initData(TelNum telNum, final int position) {
+        public void initData(CallLog telNum, final int position) {
             tvName.setText(telNum.getName());
             tvTel.setText(telNum.getTel());
 
@@ -85,6 +95,18 @@ public class TelNumAdapter extends RecyclerView.Adapter<TelNumAdapter.ViewHolder
                 }
             }
             ImageGlide.show(mContext, imgUrl, ivImg);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            tvTime.setText(sdf.format(telNum.getDate()));
+            tvType.setText(("" + telNum.getType()).replace("1", "来电").replace("2", "去电").replace("3", "未接来电").replace("9", "拒接"));
+            tvType.setTextColor(Color.WHITE);
+            if (telNum.getType() == 3) {
+                tvDuring.setText("响铃次数：" + telNum.getRingTimes());
+                tvType.setTextColor(Color.RED);
+            } else if (telNum.getType() == 9) {
+                tvDuring.setText("");
+            } else {
+                tvDuring.setText(telNum.getDuringString() + "");
+            }
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
