@@ -24,9 +24,14 @@ public class TelNumAdapter extends RecyclerView.Adapter<TelNumAdapter.ViewHolder
     private Context mContext;
     private List<TelNum> list;
     private OnItemClick onItemClick;
+    private OnItemLongClick onItemLongClick;
 
     public void setOnItemClick(OnItemClick onItemClick) {
         this.onItemClick = onItemClick;
+    }
+
+    public void setOnItemLongClick(OnItemLongClick onItemLongClick) {
+        this.onItemLongClick = onItemLongClick;
     }
 
     public TelNumAdapter(Context mContext, List<TelNum> list) {
@@ -85,19 +90,25 @@ public class TelNumAdapter extends RecyclerView.Adapter<TelNumAdapter.ViewHolder
                 }
             }
             ImageGlide.show(mContext, imgUrl, ivImg);
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public boolean onLongClick(View v) {
+                public void onClick(View v) {
                     if (onItemClick != null) {
                         onItemClick.onItemClick(position);
                     }
-                    return false;
+                }
+            });
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if (onItemLongClick != null) {
+                        onItemLongClick.onItemLongClick(position);
+                        return true;
+                    } else {
+                        return false;
+                    }
                 }
             });
         }
-    }
-
-    public interface OnItemClick {
-        void onItemClick(int position);
     }
 }

@@ -43,7 +43,9 @@
         <activity android:name=".activity.AddTelphoneNumberActivity" />
         <activity android:name=".activity.TelephoneDeleteActivity" />
         <activity android:name=".activity.ReNameActivity" />
-        <activity android:name=".activity.CallLogActivity" />
+        <activity
+            android:name=".activity.CallLogActivity"
+            android:parentActivityName=".activity.MainActivity" />
     </application>
 
 </manifest>

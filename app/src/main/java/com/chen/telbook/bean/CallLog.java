@@ -7,6 +7,12 @@ import android.text.TextUtils;
  */
 
 public class CallLog extends TelNum {
+
+    public static final int CALL_IN = 1;
+    public static final int CALL_OUT = 2;
+    public static final int CALL_IN_FAIL = 3;
+    public static final int CALL_REFUSE = 9;
+
     private int type;
     private long date;
     private int during;//时长

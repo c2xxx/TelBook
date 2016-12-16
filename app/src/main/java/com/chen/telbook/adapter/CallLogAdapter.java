@@ -23,14 +23,20 @@ import java.util.List;
  */
 
 public class CallLogAdapter extends RecyclerView.Adapter<CallLogAdapter.ViewHolder> {
-
     private Context mContext;
     private List<CallLog> list;
     private OnItemClick onItemClick;
 
+    public void setOnItemLongClick(OnItemLongClick onItemLongClick) {
+        this.onItemLongClick = onItemLongClick;
+    }
+
+    private OnItemLongClick onItemLongClick;
+
     public void setOnItemClick(OnItemClick onItemClick) {
         this.onItemClick = onItemClick;
     }
+
 
     public CallLogAdapter(Context mContext, List<CallLog> list) {
         this.mContext = mContext;
@@ -54,7 +60,6 @@ public class CallLogAdapter extends RecyclerView.Adapter<CallLogAdapter.ViewHold
 
     @Override
     public int getItemCount() {
-        Logger.d("itemCount=" + list.size());
         return list.size();
     }
 
@@ -68,6 +73,7 @@ public class CallLogAdapter extends RecyclerView.Adapter<CallLogAdapter.ViewHold
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView ivImg;
+        private ImageView iv_type;
         private TextView tvName;
         private TextView tvTel;
         private TextView tvTime;
@@ -77,6 +83,7 @@ public class CallLogAdapter extends RecyclerView.Adapter<CallLogAdapter.ViewHold
         public ViewHolder(View itemView) {
             super(itemView);
             ivImg = (ImageView) itemView.findViewById(R.id.ivImg);
+            iv_type = (ImageView) itemView.findViewById(R.id.iv_type);
             tvName = (TextView) itemView.findViewById(R.id.tvName);
             tvTel = (TextView) itemView.findViewById(R.id.tvTel);
             tvTime = (TextView) itemView.findViewById(R.id.tvTime);
@@ -85,7 +92,12 @@ public class CallLogAdapter extends RecyclerView.Adapter<CallLogAdapter.ViewHold
         }
 
         public void initData(CallLog telNum, final int position) {
-            tvName.setText(telNum.getName());
+            if (TextUtils.isEmpty(telNum.getName())) {
+                tvName.setVisibility(View.GONE);
+            } else {
+                tvName.setVisibility(View.VISIBLE);
+                tvName.setText(telNum.getName());
+            }
             tvTel.setText(telNum.getTel());
 
             String imgUrl = telNum.getImg();
@@ -95,31 +107,51 @@ public class CallLogAdapter extends RecyclerView.Adapter<CallLogAdapter.ViewHold
                 }
             }
             ImageGlide.show(mContext, imgUrl, ivImg);
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            SimpleDateFormat sdf = new SimpleDateFormat("MM月dd日 HH:mm");
             tvTime.setText(sdf.format(telNum.getDate()));
             tvType.setText(("" + telNum.getType()).replace("1", "来电").replace("2", "去电").replace("3", "未接来电").replace("9", "拒接"));
-            tvType.setTextColor(Color.WHITE);
+            String imgType = null;
+            int textColor = Color.WHITE;
             if (telNum.getType() == 3) {
                 tvDuring.setText("响铃次数：" + telNum.getRingTimes());
-                tvType.setTextColor(Color.RED);
+                textColor = Color.RED;
+                imgType = "file:///android_asset/img/call_in_fail.png";
             } else if (telNum.getType() == 9) {
                 tvDuring.setText("");
+                imgType = "file:///android_asset/img/call_in_refuse.png";
             } else {
                 tvDuring.setText(telNum.getDuringString() + "");
+                if (telNum.getType() == 1) {
+                    imgType = "file:///android_asset/img/call_in.png";
+                } else {
+                    imgType = "file:///android_asset/img/call_out.jpg";
+                }
             }
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            tvTime.setTextColor(textColor);
+            tvType.setTextColor(textColor);
+            tvTel.setTextColor(textColor);
+            tvDuring.setTextColor(textColor);
+            ImageGlide.show(mContext, imgType, iv_type);
+            itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public boolean onLongClick(View v) {
+                public void onClick(View v) {
                     if (onItemClick != null) {
                         onItemClick.onItemClick(position);
                     }
-                    return false;
+                }
+            });
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if (onItemLongClick != null) {
+                        onItemLongClick.onItemLongClick(position);
+                        return true;
+                    } else {
+                        return false;
+                    }
                 }
             });
         }
     }
 
-    public interface OnItemClick {
-        void onItemClick(int position);
-    }
 }

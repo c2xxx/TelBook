@@ -25,9 +25,21 @@ public class SharedPerferencesHelper {
         edit.commit();
     }
 
+    public static void save(String key, long value) {
+        sp = getSharedPreferences();
+        SharedPreferences.Editor edit = sp.edit();
+        edit.putLong(key, value);
+        edit.commit();
+    }
+
     public static String read(String key) {
         sp = getSharedPreferences();
         return sp.getString(key, "");
+    }
+
+    public static long readLong(String key) {
+        sp = getSharedPreferences();
+        return sp.getLong(key, 0);
     }
 
     private static SharedPreferences getSharedPreferences() {

@@ -13,6 +13,8 @@ import android.util.Base64;
 import com.chen.libchen.Logger;
 import com.chen.libchen.ToastUtil;
 import com.chen.telbook.R;
+import com.chen.telbook.adapter.OnItemClick;
+import com.chen.telbook.adapter.OnItemLongClick;
 import com.chen.telbook.adapter.TelNumAdapter;
 import com.chen.telbook.bean.TelNum;
 import com.chen.telbook.constants.Constants;
@@ -80,9 +82,9 @@ public class TelephoneDeleteActivity extends BaseActivity {
         loadRemoteXmlData();
         telAdapter = new TelNumAdapter(this, telList);
 
-        telAdapter.setOnItemClick(new TelNumAdapter.OnItemClick() {
+        telAdapter.setOnItemLongClick(new OnItemLongClick() {
             @Override
-            public void onItemClick(int position) {
+            public void onItemLongClick(int position) {
                 TelNum telNum = telList.get(position);
                 doDelete(telNum);
             }

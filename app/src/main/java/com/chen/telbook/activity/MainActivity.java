@@ -16,17 +16,23 @@ import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.chen.libchen.Logger;
 import com.chen.libchen.ToastUtil;
 import com.chen.telbook.R;
+import com.chen.telbook.adapter.OnItemClick;
+import com.chen.telbook.adapter.OnItemLongClick;
 import com.chen.telbook.adapter.TelNumAdapter;
 import com.chen.telbook.bean.TelNum;
 import com.chen.telbook.constants.Constants;
+import com.chen.telbook.helper.CheckNewMissedCall;
 import com.chen.telbook.helper.SharedPerferencesHelper;
 import com.chen.telbook.helper.TelBookXmlHelper;
 import com.chen.telbook.helper.TokenHelper;
+import com.chen.telbook.helper.VoicePlay;
+import com.chen.telbook.helper.XunFeiVoiceReadHelper;
 import com.chen.telbook.net.BaseRequest;
 import com.chen.telbook.net.NetCallback;
 
@@ -40,47 +46,77 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MainActivity extends BaseActivity {
-//    public static final String TEL_PHONE_BOOK = "TEL_PHONE_BOOK";
+    //    public static final String TEL_PHONE_BOOK = "TEL_PHONE_BOOK";
     private static final int REQUEST_ADD = 1;
     private static final int REQUEST_DELETE = 2;
     private static final int REQUEST_RENAME = 3;
     @BindView(R.id.rv_main)
     RecyclerView rvMain;
+    @BindView(R.id.iv_call_log)
+    ImageView ivCallLog;
 
     private TelNumAdapter telAdapter;
     private List<TelNum> telList = new ArrayList<>();
     private long lastReadTime = System.currentTimeMillis();
+
+    XunFeiVoiceReadHelper readHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        ivCallLog.getBackground().setAlpha(200);
         initData();
+        readHelper = new XunFeiVoiceReadHelper(this);
+        readHelper.readText(" ");//目的是初始化一次
+        checkNewMissCall();
+    }
+
+    /**
+     * 如果有新的未接电话则提示
+     */
+    private void checkNewMissCall() {
+        if (new CheckNewMissedCall().hasNewMissCall()) {
+            VoicePlay.playNewMissedCall();
+            gotoActivityCallLog();
+        }
+    }
+
+    @OnClick(R.id.iv_call_log)
+    public void gotoActivityCallLog() {
         startActivity(new Intent(this, CallLogActivity.class));
     }
 
     private void initData() {
         telAdapter = new TelNumAdapter(this, telList);
 
-        telAdapter.setOnItemClick(new TelNumAdapter.OnItemClick() {
+        telAdapter.setOnItemLongClick(new OnItemLongClick() {
+            @Override
+            public void onItemLongClick(int position) {
+                doSelectedPosition(position);
+            }
+        });
+        telAdapter.setOnItemClick(new OnItemClick() {
             @Override
             public void onItemClick(int position) {
-                doSelectedPosition(position);
+                shortClick(position);
             }
         });
         //设置布局管理器
         rvMain.setLayoutManager(new LinearLayoutManager(this));
-//设置adapter
+        //设置adapter
         rvMain.setAdapter(telAdapter);
-//设置Item增加、移除动画
+        //设置Item增加、移除动画
         rvMain.setItemAnimator(new DefaultItemAnimator());
 
         loadLocolData();
         loadRemoteData();
     }
+
 
     private void loadRemoteData() {
         String url = Constants.urlXml + "?t=" + System.currentTimeMillis();
@@ -113,10 +149,25 @@ public class MainActivity extends BaseActivity {
         if (telList != null && telList.size() > position) {
             TelNum tel = telList.get(position);
             doCall(tel.getTel());
-//            ToastUtil.show(tel.getName());
         }
     }
 
+    private void shortClick(int position) {
+//        TelNum tel = telList.get(position);
+//        readHelper.readText(tel.getName() + "," + tel.getTel().replace(" ","").replace("-",""));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        readHelper.stop();
+    }
+
+    /**
+     * 拨打电话
+     *
+     * @param tel
+     */
     private void doCall(String tel) {
         //用intent启动拨打电话
         Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + tel));
@@ -134,11 +185,13 @@ public class MainActivity extends BaseActivity {
         String strBase64 = SharedPerferencesHelper.read(SharedPerferencesHelper.TEL_PHONE_BOOK);
         if (TextUtils.isEmpty(strBase64)) {
             List<TelNum> list = new ArrayList<>();
-//            TelNum telNum = new TelNum();
-//            telNum.setImg("");
-//            telNum.setName("陈辉");
-//            telNum.setTel("15659002326");
-//            list.add(telNum);
+            if ("telbook".equals(Constants.USER_NAME)) {
+                TelNum telNum = new TelNum();
+                telNum.setImg("");
+                telNum.setName("陈辉");
+                telNum.setTel("15659002326");
+                list.add(telNum);
+            }
             telAdapter.setData(list);
         } else {
             String strResult = new String(Base64.decode(strBase64, Base64.DEFAULT));
