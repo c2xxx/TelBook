@@ -14,7 +14,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Base64;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -27,19 +26,18 @@ import com.chen.telbook.adapter.OnItemLongClick;
 import com.chen.telbook.bean.CallLog;
 import com.chen.telbook.bean.TelNum;
 import com.chen.telbook.helper.CheckNewMissedCall;
-import com.chen.telbook.helper.SharedPerferencesHelper;
 import com.chen.telbook.helper.TelBookXmlHelper;
 import com.chen.telbook.helper.XunFeiVoiceReadHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
 
 /**
  * Created by ChenHui on 2016/12/14.
@@ -150,7 +148,7 @@ public class CallLogActivity extends BaseActivity {
                 break;
         }
         Logger.d("播报>>>" + sb.toString());
-        readHelper.readText(sb.toString()+"。");
+        readHelper.readText(sb.toString() + "。");
     }
 
     /**
@@ -239,9 +237,9 @@ public class CallLogActivity extends BaseActivity {
      * @return
      */
     public List<CallLog> getCallLog(Context context) {
-        CheckNewMissedCall checkNewMissedCall=new CheckNewMissedCall();
+        CheckNewMissedCall checkNewMissedCall = new CheckNewMissedCall();
         checkNewMissedCall.setLastReadMissCallTime();
-        Map<String, TelNum> map = loadLocolData();
+        Map<String, TelNum> map = TelBookXmlHelper.loadLocolData();
         List<CallLog> callLogs = new ArrayList();
         ContentResolver cr = context.getContentResolver();
         Uri uri = android.provider.CallLog.Calls.CONTENT_URI;
@@ -306,26 +304,5 @@ public class CallLogActivity extends BaseActivity {
         }
         cursor.close();
         return callLogs;
-    }
-
-    /**
-     * 加载本地数据
-     */
-    private Map<String, TelNum> loadLocolData() {
-        Map<String, TelNum> hashMap = new Hashtable<>();
-        String strBase64 = SharedPerferencesHelper.read(SharedPerferencesHelper.TEL_PHONE_BOOK);
-        if (!TextUtils.isEmpty(strBase64)) {
-            String strResult = new String(Base64.decode(strBase64, Base64.DEFAULT));
-            try {
-                List<TelNum> list = TelBookXmlHelper.parse(strResult);
-                for (TelNum telNum : list) {
-                    hashMap.put(telNum.getTel().replace(" ", "").replace("-", ""), telNum);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        Logger.d("hashMap.size=" + hashMap.size());
-        return hashMap;
     }
 }

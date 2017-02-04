@@ -1,8 +1,12 @@
 package com.chen.telbook.helper;
 
+import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Xml;
 
+import com.chen.libchen.Logger;
 import com.chen.telbook.bean.TelNum;
+import com.chen.telbook.constants.Constants;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -11,7 +15,9 @@ import org.xmlpull.v1.XmlSerializer;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by hui on 2016/10/14.
@@ -107,5 +113,36 @@ public class TelBookXmlHelper {
             eventType = parser.next();
         }
         return list;
+    }
+
+    /**
+     * 加载本地数据
+     */
+    public static Map<String, TelNum> loadLocolData() {
+        Map<String, TelNum> hashMap = new Hashtable<>();
+        String strBase64 = SharedPerferencesHelper.read(SharedPerferencesHelper.TEL_PHONE_BOOK);
+        if (!TextUtils.isEmpty(strBase64)) {
+            String strResult = new String(Base64.decode(strBase64, Base64.DEFAULT));
+            try {
+                List<TelNum> list = TelBookXmlHelper.parse(strResult);
+                for (TelNum telNum : list) {
+                    hashMap.put(telNum.getTel().replace(" ", "").replace("-", ""), telNum);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            if (TextUtils.isEmpty(strBase64)) {
+                if ("telbook".equals(Constants.USER_NAME)) {
+                    TelNum telNum = new TelNum();
+                    telNum.setImg("");
+                    telNum.setName("陈辉");
+                    telNum.setTel("15659002326");
+                    hashMap.put(telNum.getTel().replace(" ", "").replace("-", ""), telNum);
+                }
+            }
+        }
+        Logger.d("hashMap.size=" + hashMap.size());
+        return hashMap;
     }
 }
