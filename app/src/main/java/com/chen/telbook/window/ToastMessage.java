@@ -44,6 +44,7 @@ public class ToastMessage {
     public void showNumber(String number) {
         if (TextUtils.isEmpty(number)) {
             dismiss();
+            return;
         }
         number = number.replace(" ", "").replace("-", "");
 //        ToastUtil.show("显示号码" + number);
@@ -100,6 +101,7 @@ public class ToastMessage {
             wmParams.format = PixelFormat.RGBA_8888;
             //设置浮动窗口不可聚焦（实现操作除浮动窗口外的其他可见窗口的操作）
             //wmParams.flags = LayoutParams.FLAG_NOT_FOCUSABLE;
+            wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
             //设置可以显示在状态栏上
             wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL |
                     WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR |
@@ -108,6 +110,7 @@ public class ToastMessage {
             //设置悬浮窗口长宽数据
             wmParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
             wmParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+            wmParams.x = 1000;
 
             return wmParams;
         }
@@ -121,6 +124,7 @@ public class ToastMessage {
         ViewHolder vh = new ViewHolder();
         vh.init(footbar);
         footbar.setTag(vh);
+        footbar.setClickable(false);
 
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 //        WindowManager.LayoutParams params = new WindowManager.LayoutParams();
@@ -152,8 +156,8 @@ public class ToastMessage {
 //
 //        int dimen100 = context.getResources().getDimensionPixelSize(R.dimen.dimen_100dp);
 //        params.y = -dimen100 * 2;
-
         footbar.setVisibility(View.GONE);
+        footbar.setAlpha(0.8f);
         try {
             PackageManager pm = context.getPackageManager();
             boolean permission = (PackageManager.PERMISSION_GRANTED ==

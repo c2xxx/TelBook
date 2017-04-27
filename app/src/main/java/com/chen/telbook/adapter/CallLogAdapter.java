@@ -113,7 +113,7 @@ public class CallLogAdapter extends RecyclerView.Adapter<CallLogAdapter.ViewHold
             String imgType = null;
             int textColor = Color.WHITE;
             if (telNum.getType() == 3) {
-                tvDuring.setText("响铃次数：" + telNum.getRingTimes());
+//                tvDuring.setText("响铃次数：" + telNum.getRingTimes());
                 textColor = Color.RED;
                 imgType = "file:///android_asset/img/call_in_fail.png";
             } else if (telNum.getType() == 9) {

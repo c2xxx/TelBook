@@ -129,7 +129,7 @@ public class CallLogActivity extends BaseActivity {
             case CallLog.CALL_IN_FAIL:
                 sb.append(" 未接来电");
                 sb.append(" 对方是" + name);
-                sb.append(" 响铃" + callLog.getRingTimes() + "声");
+//                sb.append(" 响铃" + callLog.getRingTimes() + "声");
                 break;
             case CallLog.CALL_IN:
                 sb.append(" " + name + " 来电 ");
@@ -250,9 +250,10 @@ public class CallLogActivity extends BaseActivity {
                 android.provider.CallLog.Calls.TYPE,
                 android.provider.CallLog.Calls.CACHED_NAME,
                 android.provider.CallLog.Calls.DURATION,
-                "INCOMING_CALL_TIME",
+//                "INCOMING_CALL_TIME",
                 android.provider.CallLog.Calls.GEOCODED_LOCATION,
-                "yulore_page_tag"};
+//                "yulore_page_tag"
+        };
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
             ToastUtil.show("没有读取通话记录的权限");
             return null;
@@ -267,27 +268,27 @@ public class CallLogActivity extends BaseActivity {
             int type = cursor.getInt(3);
             String name = cursor.getString(4);
             int duration = cursor.getInt(5);
-            int incomingCallTime = cursor.getInt(6);
-            String geocodedLocation = cursor.getString(7);
-            String yulore_page_tag = cursor.getString(8);
+//            int incomingCallTime = cursor.getInt(6);
+            String geocodedLocation = cursor.getString(6);
+//            String yulore_page_tag = cursor.getString(8);
 //            Logger.d("index====" + index++);
-            if (!TextUtils.isEmpty(yulore_page_tag)) {
-                if (yulore_page_tag.indexOf("疑似") != -1) {//跳过疑似诈骗
-                    continue;
-                }
-            }
+//            if (!TextUtils.isEmpty(yulore_page_tag)) {
+//                if (yulore_page_tag.indexOf("疑似") != -1) {//跳过疑似诈骗
+//                    continue;
+//                }
+//            }
             String number = TextUtils.isEmpty(number_format) ? number_unformat : number_format;
 //            Logger.d(name + "  number=" + number + "  TYPE=" + type + "  DURATION= " + duration + "  响铃次数 = " + incomingCallTime + " 地点：" + geocodedLocation);
-            if (type == 3 && incomingCallTime < 3) {//小于3秒的视为骚扰电话
-                continue;
-            }
+//            if (type == 3 && incomingCallTime < 3) {//小于3秒的视为骚扰电话
+//                continue;
+//            }
             if (date < threeDayAgo) {
                 break;
             }
             if (TextUtils.isEmpty(number)) {
                 continue;
             }
-            CallLog callLog = new CallLog(name, number, date, type, duration, incomingCallTime, geocodedLocation);
+            CallLog callLog = new CallLog(name, number, date, type, duration, 0, geocodedLocation);
             String number1 = number.replace("-", "").replace(" ", "");
             TelNum telNum = map.get(number1);
 //            Logger.d("telNum=" + telNum);

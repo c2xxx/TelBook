@@ -46,9 +46,10 @@ public class CheckNewMissedCall {
                 android.provider.CallLog.Calls.TYPE,
                 android.provider.CallLog.Calls.CACHED_NAME,
                 android.provider.CallLog.Calls.DURATION,
-                "INCOMING_CALL_TIME",
+//                "INCOMING_CALL_TIME",
                 android.provider.CallLog.Calls.GEOCODED_LOCATION,
-                "yulore_page_tag"};
+//                "yulore_page_tag"
+        };
         if (ActivityCompat.checkSelfPermission(MyApplication.getContext(), Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
 //            ToastUtil.show("没有读取通话记录的权限");
             return false;
