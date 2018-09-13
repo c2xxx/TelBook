@@ -29,5 +29,5 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:padding="10dp"
-        android:text="每个用户名对应不同电话列表，初次设置后不建议修改用户名，请谨慎修改。" />
+        android:text="每个用户名对应不同电话列表，初次设置后不建议修改用户名，请谨慎修改。\n用户名仅支持数字和字母" />
 </LinearLayout>

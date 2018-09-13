@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.chen.telbook.MyApplication;
+import com.chen.telbook.constants.Constants;
 
 
 /**
@@ -15,7 +16,12 @@ import com.chen.telbook.MyApplication;
  */
 public class SharedPerferencesHelper {
     public static final String USER_NAME = "USER_NAME";
-    public static final String TEL_PHONE_BOOK = "TEL_PHONE_BOOK";
+    private static final String TEL_PHONE_BOOK = "TEL_PHONE_BOOK";
+
+    public static String getPhoneBookKey() {
+        return TEL_PHONE_BOOK + Constants.USER_NAME;
+    }
+
     private static SharedPreferences sp;
 
     public static void save(String key, String value) {
@@ -45,4 +51,5 @@ public class SharedPerferencesHelper {
     private static SharedPreferences getSharedPreferences() {
         return MyApplication.getContext().getSharedPreferences("basedemo", Context.MODE_PRIVATE);
     }
+
 }

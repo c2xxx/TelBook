@@ -120,7 +120,7 @@ public class TelBookXmlHelper {
      */
     public static Map<String, TelNum> loadLocolData() {
         Map<String, TelNum> hashMap = new Hashtable<>();
-        String strBase64 = SharedPerferencesHelper.read(SharedPerferencesHelper.TEL_PHONE_BOOK);
+        String strBase64 = SharedPerferencesHelper.read(SharedPerferencesHelper.getPhoneBookKey());
         if (!TextUtils.isEmpty(strBase64)) {
             String strResult = new String(Base64.decode(strBase64, Base64.DEFAULT));
             try {

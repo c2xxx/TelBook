@@ -42,13 +42,29 @@ public class ReNameActivity extends BaseActivity {
     @OnClick(R.id.btn_submit)
     public void submit() {
         String userName = etRenameName.getText().toString().trim();
-        if (TextUtils.isEmpty(userName)) {
-            ToastUtil.show("用户名不能为空");
-        } else {
+        if (checkUserNameOk(userName)) {
             Constants.setUserName(userName);
-
             setResult(RESULT_OK);
             finish();
         }
+    }
+
+    private boolean checkUserNameOk(String userName) {
+        boolean isEmpty = TextUtils.isEmpty(userName);
+        if (isEmpty) {
+            ToastUtil.show("用户名不能为空");
+            return false;
+        }
+        String regex = "([0-9]|[A-Za-z])+";
+        boolean isZiMu = userName.matches(regex);
+        if (!isZiMu) {
+            ToastUtil.show("用户名不合法，仅支持三位以上的数字和字母");
+            return false;
+        }
+        if (userName.length() < 3) {
+            ToastUtil.show("用户名不合法，仅支持三位以上的数字和字母");
+            return false;
+        }
+        return true;
     }
 }

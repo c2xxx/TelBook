@@ -13,7 +13,6 @@ import android.util.Base64;
 import com.chen.libchen.Logger;
 import com.chen.libchen.ToastUtil;
 import com.chen.telbook.R;
-import com.chen.telbook.adapter.OnItemClick;
 import com.chen.telbook.adapter.OnItemLongClick;
 import com.chen.telbook.adapter.TelNumAdapter;
 import com.chen.telbook.bean.TelNum;
@@ -102,7 +101,7 @@ public class TelephoneDeleteActivity extends BaseActivity {
      * 加载本地数据
      */
     private void loadLocolData() {
-        String strBase64 = SharedPerferencesHelper.read(SharedPerferencesHelper.TEL_PHONE_BOOK);
+        String strBase64 = SharedPerferencesHelper.read(SharedPerferencesHelper.getPhoneBookKey());
         if (TextUtils.isEmpty(strBase64)) {
             List<TelNum> list = new ArrayList<>();
 //            TelNum telNum = new TelNum();
@@ -135,7 +134,7 @@ public class TelephoneDeleteActivity extends BaseActivity {
                 try {
                     List<TelNum> list = TelBookXmlHelper.parse(response);
                     if (list != null && !list.isEmpty()) {
-                        SharedPerferencesHelper.save(SharedPerferencesHelper.TEL_PHONE_BOOK, strBase64);
+                        SharedPerferencesHelper.save(SharedPerferencesHelper.getPhoneBookKey(), strBase64);
                         telAdapter.setData(list);
                     }
                 } catch (Exception e) {

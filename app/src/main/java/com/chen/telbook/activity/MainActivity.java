@@ -3,6 +3,7 @@ package com.chen.telbook.activity;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -17,6 +18,7 @@ import android.text.TextWatcher;
 import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -125,7 +127,7 @@ public class MainActivity extends BaseActivity {
         //设置Item增加、移除动画
         rvMain.setItemAnimator(new DefaultItemAnimator());
 
-        loadLocolData();
+        loadLocalData();
         loadRemoteData();
     }
 
@@ -138,11 +140,13 @@ public class MainActivity extends BaseActivity {
             public void onResponse(String response) {
                 lastReadTime = System.currentTimeMillis();
                 Logger.d("   " + response);
+                Logger.d("得到远程数据：" + response);
                 String strBase64 = Base64.encodeToString(response.getBytes(), Base64.DEFAULT);
                 try {
                     List<TelNum> list = TelBookXmlHelper.parse(response);
                     if (list != null && !list.isEmpty()) {
-                        SharedPerferencesHelper.save(SharedPerferencesHelper.TEL_PHONE_BOOK, strBase64);
+                        String key = SharedPerferencesHelper.getPhoneBookKey();
+                        SharedPerferencesHelper.save(key, strBase64);
                         telAdapter.setData(list);
                     }
                 } catch (Exception e) {
@@ -194,8 +198,9 @@ public class MainActivity extends BaseActivity {
     /**
      * 加载本地数据
      */
-    private void loadLocolData() {
-        String strBase64 = SharedPerferencesHelper.read(SharedPerferencesHelper.TEL_PHONE_BOOK);
+    private void loadLocalData() {
+        String key = SharedPerferencesHelper.getPhoneBookKey();
+        String strBase64 = SharedPerferencesHelper.read(key);
         if (TextUtils.isEmpty(strBase64)) {
             List<TelNum> list = new ArrayList<>();
             if ("telbook".equals(Constants.USER_NAME)) {
@@ -208,6 +213,7 @@ public class MainActivity extends BaseActivity {
             telAdapter.setData(list);
         } else {
             String strResult = new String(Base64.decode(strBase64, Base64.DEFAULT));
+            Logger.d("读取到的本地数据：" + strResult);
             try {
                 List<TelNum> list = TelBookXmlHelper.parse(strResult);
                 telAdapter.setData(list);
@@ -242,7 +248,7 @@ public class MainActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
         final EditText et = new EditText(this);
-        et.setInputType(InputType.TYPE_CLASS_NUMBER);
+        et.setInputType(InputType.TYPE_CLASS_PHONE);
         et.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -264,6 +270,13 @@ public class MainActivity extends BaseActivity {
                 }
             }
         });
+        et.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(et, 0);
+            }
+        }, 100);
         confirmDialog = new AlertDialog.Builder(this)
                 .setTitle("为了防止误操作\n请输入123，进入管理")
 //                .setIcon(R.drawable.ic_launcher)
@@ -362,7 +375,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void clearCurrentData() {
-        SharedPerferencesHelper.save(SharedPerferencesHelper.TEL_PHONE_BOOK, "");
+        SharedPerferencesHelper.save(SharedPerferencesHelper.getPhoneBookKey(), "");
         telAdapter.setData(new ArrayList<TelNum>());
     }
 
