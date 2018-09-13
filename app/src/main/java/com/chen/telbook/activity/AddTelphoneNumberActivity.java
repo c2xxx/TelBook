@@ -3,8 +3,6 @@ package com.chen.telbook.activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -317,6 +315,7 @@ public class AddTelphoneNumberActivity extends BaseActivity implements View.OnCl
                 remoteImg = Constants.HOST + key;
                 Logger.d(remoteImg);
                 ImageGlide.show(AddTelphoneNumberActivity.this, remoteImg, iv_addnumber_selectpic);
+                ToastUtil.show("图片上传成功！");
             }
 
             @Override

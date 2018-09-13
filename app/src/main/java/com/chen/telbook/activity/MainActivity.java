@@ -1,23 +1,24 @@
 package com.chen.telbook.activity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.InputType;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.chen.libchen.Logger;
 import com.chen.libchen.ToastUtil;
@@ -35,6 +36,7 @@ import com.chen.telbook.helper.VoicePlay;
 import com.chen.telbook.helper.XunFeiVoiceReadHelper;
 import com.chen.telbook.net.BaseRequest;
 import com.chen.telbook.net.NetCallback;
+import com.chen.telbook.utils.PermissionHelper;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -63,6 +65,11 @@ public class MainActivity extends BaseActivity {
     private long lastReadTime = System.currentTimeMillis();
 
     XunFeiVoiceReadHelper readHelper;
+    private String permission_call_phone = Manifest.permission.CALL_PHONE;
+    private String permission_call_log = Manifest.permission.READ_CALL_LOG;
+    private String permission_read_contacts = Manifest.permission.READ_CONTACTS;
+    private String permission_read_sd = Manifest.permission.READ_EXTERNAL_STORAGE;
+    private AlertDialog confirmDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +95,12 @@ public class MainActivity extends BaseActivity {
 
     @OnClick(R.id.iv_call_log)
     public void gotoActivityCallLog() {
-        startActivity(new Intent(this, CallLogActivity.class));
+        boolean hasPermission = PermissionHelper.check(this, permission_call_log);
+        if (hasPermission) {
+            startActivity(new Intent(this, CallLogActivity.class));
+        } else {
+            ToastUtil.show("没有权限");
+        }
     }
 
     private void initData() {
@@ -168,14 +180,15 @@ public class MainActivity extends BaseActivity {
      *
      * @param tel
      */
+    @SuppressLint("MissingPermission")
     private void doCall(String tel) {
-        //用intent启动拨打电话
-        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + tel));
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this, "没有拨号权限！", Toast.LENGTH_LONG).show();
-            return;
+        boolean hasPermission = PermissionHelper.check(this, permission_call_phone);
+        if (hasPermission) {
+            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + tel));
+            startActivity(intent);
+        } else {
+            ToastUtil.show("没有拨号权限！");
         }
-        startActivity(intent);
     }
 
     /**
@@ -229,7 +242,29 @@ public class MainActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
         final EditText et = new EditText(this);
-        AlertDialog dialog = new AlertDialog.Builder(this)
+        et.setInputType(InputType.TYPE_CLASS_NUMBER);
+        et.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (confirmDialog != null && confirmDialog.isShowing()) {
+                    if ("123".equals(s.toString())) {
+                        confirmDialog.dismiss();
+                        doMenuSelect(item);
+                    }
+                }
+            }
+        });
+        confirmDialog = new AlertDialog.Builder(this)
                 .setTitle("为了防止误操作\n请输入123，进入管理")
 //                .setIcon(R.drawable.ic_launcher)
                 .setView(et)
@@ -237,32 +272,39 @@ public class MainActivity extends BaseActivity {
                 .setNegativeButton("取消", null)
                 .setPositiveButton("确认", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-//                        if (!"123".equals(et.getText().toString().trim())) {
-//                            ToastUtil.show("输入错误！");
-//                            return;
-//                        }
-                        switch (item.getItemId()) {
-                            case Menu.FIRST + 1:
-                                Intent intent = new Intent(MainActivity.this, AddTelphoneNumberActivity.class);
-                                startActivityForResult(intent, REQUEST_ADD);
-                                break;
-                            case Menu.FIRST + 2:
-                                Intent intent2 = new Intent(MainActivity.this, TelephoneDeleteActivity.class);
-                                startActivityForResult(intent2, REQUEST_DELETE);
-                                break;
-                            case Menu.FIRST + 3:
-                                Intent intent3 = new Intent(MainActivity.this, ReNameActivity.class);
-                                startActivityForResult(intent3, REQUEST_RENAME);
-                                break;
+                        if (!"123".equals(et.getText().toString().trim())) {
+                            ToastUtil.show("输入错误！");
+                            return;
                         }
                     }
                 }).create();
-        dialog.setCancelable(true);
-        dialog.setCanceledOnTouchOutside(true);
-        dialog.show();
-//        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-//        imm.showSoftInput(et, InputMethodManager.SHOW_FORCED);
+        confirmDialog.setCancelable(true);
+        confirmDialog.setCanceledOnTouchOutside(true);
+        confirmDialog.show();
         return false;
+    }
+
+    public void doMenuSelect(MenuItem item) {
+        switch (item.getItemId()) {
+            case Menu.FIRST + 1:
+                boolean hasPermission1 = PermissionHelper.check(MainActivity.this, permission_read_contacts);
+                boolean hasPermission2 = PermissionHelper.check(MainActivity.this, permission_read_sd);
+                if (hasPermission1 && hasPermission2) {
+                    Intent intent = new Intent(MainActivity.this, AddTelphoneNumberActivity.class);
+                    startActivityForResult(intent, REQUEST_ADD);
+                } else {
+                    ToastUtil.show("没有权限");
+                }
+                break;
+            case Menu.FIRST + 2:
+                Intent intent2 = new Intent(MainActivity.this, TelephoneDeleteActivity.class);
+                startActivityForResult(intent2, REQUEST_DELETE);
+                break;
+            case Menu.FIRST + 3:
+                Intent intent3 = new Intent(MainActivity.this, ReNameActivity.class);
+                startActivityForResult(intent3, REQUEST_RENAME);
+                break;
+        }
     }
 
 
