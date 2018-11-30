@@ -17,7 +17,7 @@ import butterknife.OnClick;
  * Created by ChenHui on 2016/12/13.
  */
 
-public class ReNameActivity extends BaseActivity {
+public class LoginByNameActivity extends BaseActivity {
     @BindView(R.id.et_rename_name)
     EditText etRenameName;
 

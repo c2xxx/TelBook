@@ -1,13 +1,14 @@
 package com.chen.telbook.activity;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -83,6 +84,8 @@ public class MainActivity extends BaseActivity {
         readHelper = new XunFeiVoiceReadHelper(this);
         readHelper.readText(" ");//目的是初始化一次
         checkNewMissCall();
+
+
     }
 
     /**
@@ -184,11 +187,13 @@ public class MainActivity extends BaseActivity {
      *
      * @param tel
      */
-    @SuppressLint("MissingPermission")
     private void doCall(String tel) {
         boolean hasPermission = PermissionHelper.check(this, permission_call_phone);
         if (hasPermission) {
             Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + tel));
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
             startActivity(intent);
         } else {
             ToastUtil.show("没有拨号权限！");
@@ -314,7 +319,7 @@ public class MainActivity extends BaseActivity {
                 startActivityForResult(intent2, REQUEST_DELETE);
                 break;
             case Menu.FIRST + 3:
-                Intent intent3 = new Intent(MainActivity.this, ReNameActivity.class);
+                Intent intent3 = new Intent(MainActivity.this, LoginByNameActivity.class);
                 startActivityForResult(intent3, REQUEST_RENAME);
                 break;
         }
@@ -326,7 +331,7 @@ public class MainActivity extends BaseActivity {
         super.onResume();
         if (Constants.isUserNameEmpty()) {
             ToastUtil.show("请登录~~~");
-            Intent intent3 = new Intent(MainActivity.this, ReNameActivity.class);
+            Intent intent3 = new Intent(MainActivity.this, LoginByNameActivity.class);
             startActivityForResult(intent3, REQUEST_RENAME);
         }
 

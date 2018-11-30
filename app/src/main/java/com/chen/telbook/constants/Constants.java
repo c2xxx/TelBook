@@ -9,7 +9,10 @@ import com.chen.telbook.helper.SharedPerferencesHelper;
  */
 
 public class Constants {
-    public static final String HOST = "http://7xsiih.com2.z0.glb.clouddn.com/";
+    public static final String spaceName = "telbook";
+    public static final String accressKey = "VZtEbyKjgZSANKSfObSqXMeaRocby1zf5wseyF_V";
+    public static final String secretKey = "_TaNRS6TEOhrSWV_tq00s1JJ_HlkhOfhB9gRb70Z";
+    public static final String HOST = "http://telbook.qiniu.happy1day.com/";
     public static String USER_NAME = "";
     public static String USER_BOOK_FILE_NAME = USER_NAME + ".xml";
     public static String urlXml = HOST + USER_BOOK_FILE_NAME;

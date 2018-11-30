@@ -167,20 +167,6 @@ public class BaseRequest {
                 } else if (responseStr != null) {
                     callback.onResponse(responseStr);
                 }
-//                Logger.d("callBack1");
-//                if (response != null) {
-//                    Logger.d("callBack2");
-//                    try {
-//                        String str = response.body().string();
-//                        callback.onResponse(str);
-//                        Logger.d("callBack3");
-//                    } catch (IOException e1) {
-//                        Logger.d("callBack4");
-//                        callback.onFailure(e1);
-//                    }
-//                } else if (e != null) {
-//                    callback.onFailure(e);
-//                }
             }
         }.execute();
     }

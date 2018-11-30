@@ -3,6 +3,7 @@ package com.chen.telbook.helper;
 import android.util.Base64;
 
 import com.chen.libchen.Logger;
+import com.chen.telbook.constants.Constants;
 import com.chen.telbook.utils.SHA1Util;
 
 /**
@@ -10,9 +11,9 @@ import com.chen.telbook.utils.SHA1Util;
  */
 
 public class TokenHelper {
-    private static final String spaceName = "telbook";
-    private static final String accressKey = "VZtEbyKjgZSANKSfObSqXMeaRocby1zf5wseyF_V";
-    private static final String secretKey = "_TaNRS6TEOhrSWV_tq00s1JJ_HlkhOfhB9gRb70Z";
+    private static final String spaceName = Constants.spaceName;
+    private static final String accressKey = Constants.accressKey;
+    private static final String secretKey = Constants.secretKey;
 
     public static String getToken(String key) {
         return getToken(spaceName, key, accressKey, secretKey);
