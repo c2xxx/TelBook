@@ -35,6 +35,7 @@ import com.chen.telbook.helper.CheckNewMissedCall;
 import com.chen.telbook.helper.SharedPerferencesHelper;
 import com.chen.telbook.helper.TelBookXmlHelper;
 import com.chen.telbook.helper.TokenHelper;
+import com.chen.telbook.helper.UpdateHelper;
 import com.chen.telbook.helper.VoicePlay;
 import com.chen.telbook.helper.XunFeiVoiceReadHelper;
 import com.chen.telbook.net.BaseRequest;
@@ -84,8 +85,7 @@ public class MainActivity extends BaseActivity {
         readHelper = new XunFeiVoiceReadHelper(this);
         readHelper.readText(" ");//目的是初始化一次
         checkNewMissCall();
-
-
+        UpdateHelper.checkUpdate(this);
     }
 
     /**

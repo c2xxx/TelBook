@@ -16,6 +16,10 @@ public class Constants {
     public static String USER_NAME = "";
     public static String USER_BOOK_FILE_NAME = USER_NAME + ".xml";
     public static String urlXml = HOST + USER_BOOK_FILE_NAME;
+    /**
+     * 检查更新的地址
+     */
+    public static final String checkUpdata = "https://raw.githubusercontent.com/c2xxx/TelBook/develop/app/src/main/java/com/chen/telbook/UpdateConfig.json";
 
     public static void setUserName(String userName) {
         USER_NAME = userName;

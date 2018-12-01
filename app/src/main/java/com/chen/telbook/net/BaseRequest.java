@@ -6,7 +6,9 @@ import android.util.Log;
 import com.chen.libchen.Logger;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
 import okhttp3.Call;
@@ -87,6 +89,59 @@ public class BaseRequest {
                 callBack(callback, call, response, null);
             }
         });
+    }
+
+    public void downLoad(final String url, final String path, final String fileName, final DownloadCallback fileCallback) {
+
+        Request request = new Request.Builder().url(url).build();
+        mOkHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // 下载失败
+                fileCallback.onFailure(e);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                InputStream is = null;
+                byte[] buf = new byte[2048];
+                int len = 0;
+                FileOutputStream fos = null;
+                // 储存下载文件的目录
+                String savePath = path;
+                try {
+                    is = response.body().byteStream();
+                    long total = response.body().contentLength();
+                    File file = new File(savePath, fileName);
+                    fos = new FileOutputStream(file);
+                    long sum = 0;
+                    while ((len = is.read(buf)) != -1) {
+                        fos.write(buf, 0, len);
+                        sum += len;
+                        int progress = (int) (sum * 1.0f / total * 100);
+                        // 下载中
+                        fileCallback.progress(progress);
+                    }
+                    fos.flush();
+                    // 下载完成
+                    fileCallback.onResponse(file);
+                } catch (Exception e) {
+                    fileCallback.onFailure(e);
+                } finally {
+                    try {
+                        if (is != null)
+                            is.close();
+                    } catch (IOException e) {
+                    }
+                    try {
+                        if (fos != null)
+                            fos.close();
+                    } catch (IOException e) {
+                    }
+                }
+            }
+        });
+
     }
 
     public void postFile(String url, Map<String, Object> params, final NetCallback callback) {
