@@ -1,6 +1,11 @@
 package com.chen.telbook.utils;
 
+import android.text.TextUtils;
+
+import com.alibaba.fastjson.JSON;
 import com.chen.telbook.bean.AppConfigBean;
+import com.chen.telbook.helper.SharedPerferencesHelper;
+
 
 /**
  * Created by ChenHui on 2018/12/1.
@@ -8,11 +13,12 @@ import com.chen.telbook.bean.AppConfigBean;
 
 public class AppConfig {
 
-    private static   AppConfig instance;
+    private static final String KEY = "AppConfig_Setting";
+    private static AppConfig instance;
 
     public static AppConfig getInstance() {
         if (instance == null) {
-            instance=new AppConfig();
+            instance = new AppConfig();
         }
         return instance;
     }
@@ -21,7 +27,7 @@ public class AppConfig {
 
     public AppConfigBean getConfig() {
         if (config == null) {
-            config=new AppConfigBean();
+            config = new AppConfigBean();
         }
         return config;
     }
@@ -30,11 +36,23 @@ public class AppConfig {
         this.config = config;
     }
 
-    public AppConfig(){
+    public AppConfig() {
         init();
     }
-    private void init(){
 
+    private void save(AppConfigBean config) {
+        SharedPerferencesHelper.save(KEY, JSON.toJSONString(config));
+    }
+
+    private void init() {
+        String content = SharedPerferencesHelper.read(KEY);
+        if (!TextUtils.isEmpty(content)) {
+            try {
+                config = JSON.parseObject(content, AppConfigBean.class);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }
