@@ -62,12 +62,15 @@ public class HttpUtil implements HttpManager {
             }
 
 
-
             @Override
             public void progress(int progress) {
                 callback.onProgress(progress, 100);
             }
         };
-        BaseRequest.getInstance().downLoad(url, path, fileName, fileCallback);
+        try {
+            BaseRequest.getInstance().downLoad(url, path, fileName, fileCallback);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

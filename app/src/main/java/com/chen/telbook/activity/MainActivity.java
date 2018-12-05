@@ -85,7 +85,7 @@ public class MainActivity extends BaseActivity {
         readHelper = new XunFeiVoiceReadHelper(this);
         readHelper.readText(" ");//目的是初始化一次
         checkNewMissCall();
-        UpdateHelper.checkUpdate(this);
+        UpdateHelper.checkUpdateHomePage(this);
     }
 
     /**
@@ -246,7 +246,7 @@ public class MainActivity extends BaseActivity {
 
         menu.add(Menu.NONE, Menu.FIRST + 1, 1, "添加");
         menu.add(Menu.NONE, Menu.FIRST + 2, 2, "删除");
-        menu.add(Menu.NONE, Menu.FIRST + 3, 3, "登录");
+        menu.add(Menu.NONE, Menu.FIRST + 3, 3, "更多");
         return true;
     }
 
@@ -319,7 +319,7 @@ public class MainActivity extends BaseActivity {
                 startActivityForResult(intent2, REQUEST_DELETE);
                 break;
             case Menu.FIRST + 3:
-                Intent intent3 = new Intent(MainActivity.this, LoginByNameActivity.class);
+                Intent intent3 = new Intent(MainActivity.this, MoreActivity.class);
                 startActivityForResult(intent3, REQUEST_RENAME);
                 break;
         }

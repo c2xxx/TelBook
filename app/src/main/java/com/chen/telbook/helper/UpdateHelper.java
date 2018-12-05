@@ -4,6 +4,7 @@ import android.app.Activity;
 
 import com.alibaba.fastjson.JSON;
 import com.chen.libchen.Logger;
+import com.chen.libchen.ToastUtil;
 import com.chen.telbook.BuildConfig;
 import com.chen.telbook.bean.UpdateBean;
 import com.chen.telbook.constants.Constants;
@@ -21,13 +22,21 @@ public class UpdateHelper {
      * 检查升级
      */
     public static void checkUpdate(Activity activity) {
-        boolean isCheckUpdta = AppConfig.getInstance().isCheckUpdate();
+        UpdateHelper updateHelper = new UpdateHelper();
+        updateHelper.doCheckUpdate(activity, Constants.checkUpdata + "?t=" + System.currentTimeMillis());
+
+    }
+    /**
+     * 检查升级
+     */
+    public static void checkUpdateHomePage(Activity activity) {
+        boolean isCheckUpdta = AppConfig.getInstance().getConfig().isCheckUpdateOnStart();
         if (!isCheckUpdta) {
             return;
         }
 
         UpdateHelper updateHelper = new UpdateHelper();
-        updateHelper.doCheckUpdate(activity, Constants.checkUpdata);
+        updateHelper.doCheckUpdate(activity, Constants.checkUpdata + "?t=" + System.currentTimeMillis());
     }
 
     private void doCheckUpdate(Activity activity, String checkUrl) {
@@ -51,11 +60,14 @@ public class UpdateHelper {
                     @Override
                     protected UpdateAppBean parseJson(String json) {
                         Logger.d("返回的内容：" + json);
-                        UpdateBean updateBean= JSON.parseObject(json,UpdateBean.class);
+                        UpdateBean updateBean = JSON.parseObject(json, UpdateBean.class);
                         UpdateAppBean updateAppBean = new UpdateAppBean();
-                        boolean isUpdate=updateBean.getIsUpdate();
-                        if(isUpdate){
-                            isUpdate=updateBean.getVersionCode()- BuildConfig.VERSION_CODE>0;
+                        boolean isUpdate = updateBean.getIsUpdate();
+                        if (isUpdate) {
+                            isUpdate = updateBean.getVersionCode() - BuildConfig.VERSION_CODE > 0;
+                        }
+                        if (!isUpdate) {
+                            ToastUtil.show("当前已经是最新版本");
                         }
                         //（必须）是否更新Yes,No
                         updateAppBean.setUpdate(isUpdate ? "Yes" : "No")

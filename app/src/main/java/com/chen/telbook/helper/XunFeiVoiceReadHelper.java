@@ -16,9 +16,9 @@ import com.iflytek.cloud.SynthesizerListener;
 
 
 /*
-* 文本读取类
-* 在使用之前一定要注册，在打开使用语音输入的Activity之前注册
-* */
+ * 文本读取类
+ * 在使用之前一定要注册，在打开使用语音输入的Activity之前注册
+ * */
 public class XunFeiVoiceReadHelper {
 
     private Context context;
@@ -41,6 +41,7 @@ public class XunFeiVoiceReadHelper {
         if (TextUtils.isEmpty(text)) {
             return;
         }
+        showLog("PlayContent:" + text);
         setParam();
         int code = mTts.startSpeaking(text, mTtsListener);
 //			/**

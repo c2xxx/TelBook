@@ -1,5 +1,7 @@
 package com.chen.telbook.utils;
 
+import com.chen.telbook.bean.AppConfigBean;
+
 /**
  * Created by ChenHui on 2018/12/1.
  */
@@ -15,6 +17,19 @@ public class AppConfig {
         return instance;
     }
 
+    private AppConfigBean config;
+
+    public AppConfigBean getConfig() {
+        if (config == null) {
+            config=new AppConfigBean();
+        }
+        return config;
+    }
+
+    public void setConfig(AppConfigBean config) {
+        this.config = config;
+    }
+
     public AppConfig(){
         init();
     }
@@ -22,14 +37,4 @@ public class AppConfig {
 
     }
 
-
-    private boolean isCheckUpdate=true;
-
-    public boolean isCheckUpdate() {
-        return isCheckUpdate;
-    }
-
-    public void setCheckUpdate(boolean checkUpdate) {
-        isCheckUpdate = checkUpdate;
-    }
 }

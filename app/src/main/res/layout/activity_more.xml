@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="15dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="使用前校验每项功能是否完整 "
+            android:textColor="#FF0000"
+            android:textSize="24sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="
+       使用时校验每项功能是否完整，功能异常请检查权限，或联系作者\n
+    1、首页正常显示通讯录，以及图片\n
+    2、首页长按联系人头像拨打电话\n
+    3、通话记录页面，点击联系人语音播报详情，长按拨号\n
+    4、接收图片通讯录内联系人的来电，是否弹框显示联系人头像\n
+    5、读取通话记录，检查通话记录图标是否正确（拨出，已接，未接）\n
+    6、添加和删除通讯录内容\n" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:background="#000000" />
+
+        <Button
+            android:id="@+id/btn_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="重新登录" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="
+        无需注册，可填写用户姓名首字母作为用户名\n
+        每个用户名对应不同电话列表，初次设置后不建议修改用户名，请谨慎修改。如发现用户名已经存在他人号码，请用其他用户名！\n
+        用户名仅支持数字和字母" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:background="#000000" />
+
+        <Button
+            android:id="@+id/btn_check_permission"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="检查权限" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="
+        应用需要以下功能\n
+    1、拨打电话\n
+    2、读取通讯录\n
+    3、读取通话记录\n
+    4、接收电话弹框（接听电话显示联系人头像）\n
+    5、开启开机自动启动（更容易监听到来电）" />
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:background="#000000" />
+
+        <Button
+            android:id="@+id/btn_setting"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="功能设置" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="
+        监听到图片通讯录来电是否显示联系人头像\n
+        进入首页，没网时是否语音提示没有网络\n
+        设置启动首页是否检查升级" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:background="#000000" />
+
+        <Button
+            android:id="@+id/btn_check_update"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="检查升级" />
+
+        <TextView
+            android:id="@+id/tv_version"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="
+            欢迎反馈问题和建议，能修复的尽量修复\n
+            微信号 c2c999（灰谷子）   " />
+
+
+    </LinearLayout>
+</ScrollView>
