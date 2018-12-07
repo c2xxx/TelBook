@@ -1,8 +1,8 @@
 {
   "_describe": "这是用于app检查升级的文件，程序发布后，这个文件提交到github，应用可以检测到这个文件内容，然后根据提示进行升级",
   "isUpdate": true,
-  "apkUrl": "apk",
-  "versionName": "V1.0.2",
-  "versionCode": 2,
-  "updateContent": "更新了xxxx"
+  "apkUrl": "https://raw.githubusercontent.com/c2xxx/TelBook/develop/app/src/main/java/com/chen/telbook/apk/telbook.apk",
+  "versionName": "V1.0.1",
+  "versionCode": 3,
+  "updateContent": "基本功能重新梳理"
 }
