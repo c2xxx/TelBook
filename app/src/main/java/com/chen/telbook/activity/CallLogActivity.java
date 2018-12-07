@@ -259,7 +259,7 @@ public class CallLogActivity extends BaseActivity {
             ToastUtil.show("没有读取通话记录的权限");
             return null;
         }
-        Cursor cursor = cr.query(uri, projection, null, null, android.provider.CallLog.Calls.DATE + " desc limit 200 ");
+        Cursor cursor = cr.query(uri, projection, null, null, android.provider.CallLog.Calls.DATE + " desc limit 100 ");
         long threeDayAgo = System.currentTimeMillis() - 3 * 24 * 3600 * 1000;
         int index = 0;
         while (cursor.moveToNext()) {

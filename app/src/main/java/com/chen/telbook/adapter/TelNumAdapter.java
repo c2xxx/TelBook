@@ -86,7 +86,7 @@ public class TelNumAdapter extends RecyclerView.Adapter<TelNumAdapter.ViewHolder
 
             String imgUrl = telNum.getImg();
             imgUrl = QiNiuImageSize.format(imgUrl);
-            Logger.d("图片地址：" + imgUrl);
+//            Logger.d("图片地址：" + imgUrl);
             ImageGlide.show(mContext, imgUrl, ivImg);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

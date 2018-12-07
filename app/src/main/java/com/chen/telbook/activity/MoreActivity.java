@@ -76,12 +76,14 @@ public class MoreActivity extends BaseActivity {
         PermissionHelper.checkAlertWindow(this);
         if (!TextUtils.isEmpty(error)) {
             ToastUtil.show(error);
+        } else {
+            ToastUtil.show("拥有足够权限");
         }
     }
 
     @OnClick(R.id.btn_setting)
     public void doSetting() {
-        ToastUtil.show("设置");
+        ToastUtil.show("设置功能未完成");
     }
 
 

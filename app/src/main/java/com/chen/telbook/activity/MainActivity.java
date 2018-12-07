@@ -14,16 +14,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputType;
-import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.chen.libchen.Logger;
 import com.chen.libchen.ToastUtil;
 import com.chen.telbook.R;
 import com.chen.telbook.adapter.OnItemClick;
@@ -32,23 +29,14 @@ import com.chen.telbook.adapter.TelNumAdapter;
 import com.chen.telbook.bean.TelNum;
 import com.chen.telbook.constants.Constants;
 import com.chen.telbook.helper.CheckNewMissedCall;
-import com.chen.telbook.helper.SharedPerferencesHelper;
-import com.chen.telbook.helper.TelBookXmlHelper;
-import com.chen.telbook.helper.TokenHelper;
+import com.chen.telbook.helper.TelBookManager;
 import com.chen.telbook.helper.UpdateHelper;
 import com.chen.telbook.helper.VoicePlay;
 import com.chen.telbook.helper.XunFeiVoiceReadHelper;
-import com.chen.telbook.net.BaseRequest;
-import com.chen.telbook.net.NetCallback;
 import com.chen.telbook.utils.PermissionHelper;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -66,7 +54,6 @@ public class MainActivity extends BaseActivity {
 
     private TelNumAdapter telAdapter;
     private List<TelNum> telList = new ArrayList<>();
-    private long lastReadTime = System.currentTimeMillis();
 
     XunFeiVoiceReadHelper readHelper;
     private String permission_call_phone = Manifest.permission.CALL_PHONE;
@@ -129,6 +116,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initData() {
+
         telAdapter = new TelNumAdapter(this, telList);
 
         telAdapter.setOnItemLongClick(new OnItemLongClick() {
@@ -150,38 +138,27 @@ public class MainActivity extends BaseActivity {
         //设置Item增加、移除动画
         rvMain.setItemAnimator(new DefaultItemAnimator());
 
-        loadLocalData();
+        telAdapter.setData(TelBookManager.getInstance().getList());
         loadRemoteData();
+
+        TelBookManager.getInstance().addListener(new TelBookManager.OnDataChange() {
+            @Override
+            public void onChange() {
+                telAdapter.setData(TelBookManager.getInstance().getList());
+                telAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
 
-    private void loadRemoteData() {
-        String url = Constants.urlXml + "?t=" + System.currentTimeMillis();
-        Logger.d("url=" + url);
-        NetCallback callback = new NetCallback() {
-            @Override
-            public void onResponse(String response) {
-                lastReadTime = System.currentTimeMillis();
-                Logger.d("   " + response);
-                Logger.d("得到远程数据：" + response);
-                String strBase64 = Base64.encodeToString(response.getBytes(), Base64.DEFAULT);
-                try {
-                    List<TelNum> list = TelBookXmlHelper.parse(response);
-                    if (list != null && !list.isEmpty()) {
-                        String key = SharedPerferencesHelper.getPhoneBookKey();
-                        SharedPerferencesHelper.save(key, strBase64);
-                        telAdapter.setData(list);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        TelBookManager.getInstance().clearListener();
+    }
 
-            @Override
-            public void onFailure(Exception e) {
-            }
-        };
-        BaseRequest.getInstance().get(url, null, callback);
+    private void loadRemoteData() {
+        TelBookManager.getInstance().loadRemoteData();
     }
 
     private void doSelectedPosition(int position) {
@@ -219,35 +196,6 @@ public class MainActivity extends BaseActivity {
             ToastUtil.show("没有拨号权限！");
         }
     }
-
-    /**
-     * 加载本地数据
-     */
-    private void loadLocalData() {
-        String key = SharedPerferencesHelper.getPhoneBookKey();
-        String strBase64 = SharedPerferencesHelper.read(key);
-        if (TextUtils.isEmpty(strBase64)) {
-            List<TelNum> list = new ArrayList<>();
-            if ("telbook".equals(Constants.USER_NAME)) {
-                TelNum telNum = new TelNum();
-                telNum.setImg("");
-                telNum.setName("陈辉");
-                telNum.setTel("15659002326");
-                list.add(telNum);
-            }
-            telAdapter.setData(list);
-        } else {
-            String strResult = new String(Base64.decode(strBase64, Base64.DEFAULT));
-            Logger.d("读取到的本地数据：" + strResult);
-            try {
-                List<TelNum> list = TelBookXmlHelper.parse(strResult);
-                telAdapter.setData(list);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -354,11 +302,7 @@ public class MainActivity extends BaseActivity {
             Intent intent3 = new Intent(MainActivity.this, LoginByNameActivity.class);
             startActivityForResult(intent3, REQUEST_RENAME);
         }
-
-        if (System.currentTimeMillis() - lastReadTime > 60 * 1000 * 3) {
-            loadRemoteData();
-        }
-
+        loadRemoteData();
     }
 
     @Override
@@ -370,80 +314,16 @@ public class MainActivity extends BaseActivity {
                 telNum.setImg(data.getStringExtra("img"));
                 telNum.setName(data.getStringExtra("name"));
                 telNum.setTel(data.getStringExtra("tel"));
-                telList.add(telNum);
-                telAdapter.notifyDataSetChanged();
-                saveCurrentData();
+                TelBookManager.getInstance().addTel(telNum);
             } else if (requestCode == REQUEST_DELETE && data != null) {
                 TelNum telNum = new TelNum();
                 telNum.setImg(data.getStringExtra("img"));
                 telNum.setName(data.getStringExtra("name"));
                 telNum.setTel(data.getStringExtra("tel"));
-                int position = -1;
-                for (int i = 0, len = telList.size(); i < len; i++) {
-                    TelNum telNum1 = telList.get(i);
-                    if (TextUtils.equals(telNum1.getTel(), telNum.getTel())) {
-                        if (TextUtils.equals(telNum1.getName(), telNum.getName())) {
-                            position = i;
-                            break;
-                        }
-                    }
-                }
-                if (position != -1) {
-                    telList.remove(position);
-                    telAdapter.notifyDataSetChanged();
-                    saveCurrentData();
-                }
-            } else if (requestCode == REQUEST_RENAME) {
-                clearCurrentData();
-                loadRemoteData();
+                TelBookManager.getInstance().removeTel(telNum);
             }
         }
     }
 
-    private void clearCurrentData() {
-        SharedPerferencesHelper.save(SharedPerferencesHelper.getPhoneBookKey(), "");
-        telAdapter.setData(new ArrayList<TelNum>());
-    }
 
-    private void saveCurrentData() {
-        try {
-            String xmlContent = TelBookXmlHelper.writeToString(telList);
-            File file = File.createTempFile("xx" + System.currentTimeMillis(), "xml");
-            FileWriter fw = new FileWriter(file);
-            BufferedWriter bw = new BufferedWriter(fw);
-            bw.write(xmlContent);
-            bw.close();
-
-            String key = Constants.USER_BOOK_FILE_NAME;
-            String token = TokenHelper.getToken(key);
-            ToastUtil.show("正在保存");
-            NetCallback callback = new NetCallback() {
-                @Override
-                public void onResponse(String response) {
-                    ToastUtil.show("保存成功！");
-                }
-
-                @Override
-                public void onFailure(Exception e) {
-                    ToastUtil.show("保存到网络失败！");
-                    loadRemoteData();
-                }
-            };
-            uploadFile(key, token, file, callback);
-        } catch (Exception e) {
-            ToastUtil.show("保存失败！");
-            loadRemoteData();
-            Logger.e(e);
-        }
-    }
-
-    private void uploadFile(String key, String token, File file, NetCallback callback) {
-
-        String url = "http://upload.qiniu.com/";
-        Map<String, Object> params = new Hashtable<>();
-        params.put("key", key);
-        params.put("token", token);
-        params.put("file", file);
-        new BaseRequest().postFile(url, params, callback);
-    }
 }

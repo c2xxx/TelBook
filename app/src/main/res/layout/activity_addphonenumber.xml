@@ -26,7 +26,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:padding="5dp"
-                    android:text="称呼："
+                    android:text="姓名："
                     android:textSize="24sp" />
 
                 <EditText
@@ -46,7 +46,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:padding="5dp"
-                    android:text="号码："
+                    android:text="电话："
                     android:textSize="24sp" />
 
                 <EditText
@@ -63,19 +63,50 @@
                 android:text="从通讯录选择号码"
                 android:textSize="24sp" />
 
-            <ImageView
-                android:id="@+id/iv_addnumber_selectpic"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp" />
 
-            <Button
-                android:id="@+id/btn_addnumber_selectpic"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="从通本地选择图片"
-                android:textSize="24sp" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:padding="5dp"
+                    android:text="头像："
+                    android:textSize="24sp" />
+
+                <ImageView
+                    android:id="@+id/iv_addnumber_selectpic"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp"
+                    android:background="#DDD" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_addnumber_take_photo"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="照相"
+                    android:textSize="24sp" />
+
+                <Button
+                    android:id="@+id/btn_addnumber_selectpic"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="选择图片"
+                    android:textSize="24sp" />
+            </LinearLayout>
 
             <Button
                 android:id="@+id/btn_addnumber_save"

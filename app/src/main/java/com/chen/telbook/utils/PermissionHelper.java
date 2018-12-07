@@ -24,6 +24,7 @@ public class PermissionHelper {
             Manifest.permission.CALL_PHONE,
             Manifest.permission.READ_CONTACTS,
             Manifest.permission.READ_CALL_LOG,
+            Manifest.permission.CAMERA,
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
     };
@@ -54,6 +55,8 @@ public class PermissionHelper {
                 activity.startActivity(intent);
                 return false;
             }
+        } else {
+            return check(activity, Manifest.permission.SYSTEM_ALERT_WINDOW);
         }
         return true;
     }
@@ -66,6 +69,9 @@ public class PermissionHelper {
                 break;
             case Manifest.permission.READ_CONTACTS:
                 name = "拨打电话";
+                break;
+            case Manifest.permission.CAMERA:
+                name = "照相";
                 break;
             case Manifest.permission.READ_CALL_LOG:
                 name = "读取通话记录";

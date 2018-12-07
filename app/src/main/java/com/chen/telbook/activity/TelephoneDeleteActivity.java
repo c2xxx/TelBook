@@ -7,20 +7,12 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
-import android.util.Base64;
 
-import com.chen.libchen.Logger;
-import com.chen.libchen.ToastUtil;
 import com.chen.telbook.R;
 import com.chen.telbook.adapter.OnItemLongClick;
 import com.chen.telbook.adapter.TelNumAdapter;
 import com.chen.telbook.bean.TelNum;
-import com.chen.telbook.constants.Constants;
-import com.chen.telbook.helper.SharedPerferencesHelper;
-import com.chen.telbook.helper.TelBookXmlHelper;
-import com.chen.telbook.net.BaseRequest;
-import com.chen.telbook.net.NetCallback;
+import com.chen.telbook.helper.TelBookManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,8 +69,6 @@ public class TelephoneDeleteActivity extends BaseActivity {
     protected void initData() {
         telList = new ArrayList<>();
         telAdapter = new TelNumAdapter(this, telList);
-        loadLocolData();
-        loadRemoteXmlData();
         telAdapter = new TelNumAdapter(this, telList);
 
         telAdapter.setOnItemLongClick(new OnItemLongClick() {
@@ -94,59 +84,14 @@ public class TelephoneDeleteActivity extends BaseActivity {
         rvMain.setAdapter(telAdapter);
         //设置Item增加、移除动画
         rvMain.setItemAnimator(new DefaultItemAnimator());
-    }
 
-
-    /**
-     * 加载本地数据
-     */
-    private void loadLocolData() {
-        String strBase64 = SharedPerferencesHelper.read(SharedPerferencesHelper.getPhoneBookKey());
-        if (TextUtils.isEmpty(strBase64)) {
-            List<TelNum> list = new ArrayList<>();
-//            TelNum telNum = new TelNum();
-//            telNum.setImg("");
-//            telNum.setName("陈辉");
-//            telNum.setTel("15659002326");
-//            list.add(telNum);
-            telAdapter.setData(list);
-        } else {
-            String strResult = new String(Base64.decode(strBase64, Base64.DEFAULT));
-            try {
-                List<TelNum> list = TelBookXmlHelper.parse(strResult);
-                telAdapter.setData(list);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * 加载远程数据
-     */
-    private void loadRemoteXmlData() {
-        String url = Constants.urlXml + "?t=" + System.currentTimeMillis();
-        NetCallback callback = new NetCallback() {
+        telAdapter.setData(TelBookManager.getInstance().getList());
+        TelBookManager.getInstance().addListener(new TelBookManager.OnDataChange() {
             @Override
-            public void onResponse(String response) {
-                Logger.d("   " + response);
-                String strBase64 = Base64.encodeToString(response.getBytes(), Base64.DEFAULT);
-                try {
-                    List<TelNum> list = TelBookXmlHelper.parse(response);
-                    if (list != null && !list.isEmpty()) {
-                        SharedPerferencesHelper.save(SharedPerferencesHelper.getPhoneBookKey(), strBase64);
-                        telAdapter.setData(list);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            public void onChange() {
+                telAdapter.setData(TelBookManager.getInstance().getList());
+                telAdapter.notifyDataSetChanged();
             }
-
-            @Override
-            public void onFailure(Exception e) {
-                ToastUtil.show("加载数据失败，请检查网络");
-            }
-        };
-        BaseRequest.getInstance().get(url, null, callback);
+        });
     }
 }

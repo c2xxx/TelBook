@@ -8,6 +8,7 @@ import android.widget.EditText;
 import com.chen.libchen.ToastUtil;
 import com.chen.telbook.R;
 import com.chen.telbook.constants.Constants;
+import com.chen.telbook.helper.TelBookManager;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -44,6 +45,7 @@ public class LoginByNameActivity extends BaseActivity {
         String userName = etRenameName.getText().toString().trim();
         if (checkUserNameOk(userName)) {
             Constants.setUserName(userName);
+            TelBookManager.getInstance().refreshAllData();
             setResult(RESULT_OK);
             finish();
         }

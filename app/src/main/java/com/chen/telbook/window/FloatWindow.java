@@ -69,7 +69,7 @@ public class FloatWindow implements View.OnTouchListener {
         mWindowParams = new WindowManager.LayoutParams();
         mWindowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
         if (Build.VERSION.SDK_INT >= 26) {//8.0新特性
-            mWindowParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;
+            mWindowParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
         } else {
             mWindowParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
         }

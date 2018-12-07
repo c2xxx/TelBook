@@ -1,11 +1,12 @@
 package com.chen.telbook.activity;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -15,8 +16,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.chen.libchen.Logger;
 import com.chen.libchen.ToastUtil;
 import com.chen.telbook.R;
@@ -25,10 +24,13 @@ import com.chen.telbook.helper.TokenHelper;
 import com.chen.telbook.net.BaseRequest;
 import com.chen.telbook.net.NetCallback;
 import com.chen.telbook.utils.ImageGlide;
+import com.yuyh.library.imgsel.ISNav;
+import com.yuyh.library.imgsel.common.ImageLoader;
+import com.yuyh.library.imgsel.config.ISCameraConfig;
+import com.yuyh.library.imgsel.config.ISListConfig;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -37,8 +39,14 @@ import java.util.Map;
  */
 
 public class AddTelphoneNumberActivity extends BaseActivity implements View.OnClickListener {
+    /**
+     * 选择号码
+     */
     private static final int REQUEST_PICK_NUMBER = 1001;
+    @Deprecated
     private static final int RESULT_LOAD_IMAGE = 1002;
+    private static final int REQUEST_LIST_CODE = 1003;
+    private static final int REQUEST_CAMERA_CODE = 1004;
 
     private ImageView iv_addnumber_selectpic;
     private EditText et_addnumber_phonenumber;
@@ -50,12 +58,14 @@ public class AddTelphoneNumberActivity extends BaseActivity implements View.OnCl
         setContentView(R.layout.activity_addphonenumber);
         super.onCreate(savedInstanceState);
         initViews();
+        initImgLoader();
     }
 
     protected void initViews() {
 //        setTitleText("添加号码");
         setTitle("添加联系人");
         findViewById(R.id.btn_addnumber_selectnum).setOnClickListener(this);
+        findViewById(R.id.btn_addnumber_take_photo).setOnClickListener(this);
         findViewById(R.id.btn_addnumber_selectpic).setOnClickListener(this);
         findViewById(R.id.btn_addnumber_save).setOnClickListener(this);
         et_addnumber_phonenumber = (EditText) findViewById(R.id.et_addnumber_phonenumber);
@@ -67,20 +77,79 @@ public class AddTelphoneNumberActivity extends BaseActivity implements View.OnCl
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_addnumber_selectnum:
-                // TODO Auto-generated method stub
                 Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
                 startActivityForResult(intent, REQUEST_PICK_NUMBER);
                 break;
             case R.id.btn_addnumber_selectpic:
-                //从相册选择照片，不用区分版本
-                Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(i, RESULT_LOAD_IMAGE);
+                pickerImg();
+//                //从相册选择照片，不用区分版本
+//                Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                startActivityForResult(i, RESULT_LOAD_IMAGE);
+                break;
+            case R.id.btn_addnumber_take_photo:
+                doTakePhoto();
                 break;
             case R.id.btn_addnumber_save:
                 doSave();
                 break;
         }
     }
+
+    private void doTakePhoto() {
+        ISCameraConfig config = new ISCameraConfig.Builder()
+                .needCrop(true) // 裁剪
+                .cropSize(1, 1, 1000, 1000)
+                .build();
+
+        ISNav.getInstance().toCameraActivity(this, config, REQUEST_CAMERA_CODE);
+    }
+
+
+    private void initImgLoader() {
+        // 自定义图片加载器
+        ISNav.getInstance().init(new ImageLoader() {
+            @Override
+            public void displayImage(Context context, String path, ImageView imageView) {
+                Glide.with(context).load(path).into(imageView);
+            }
+        });
+    }
+
+    private void pickerImg() {
+        // 自由配置选项
+        ISListConfig config = new ISListConfig.Builder()
+                // 是否多选, 默认true
+                .multiSelect(false)
+                // 是否记住上次选中记录, 仅当multiSelect为true的时候配置，默认为true
+                .rememberSelected(false)
+                // “确定”按钮背景色
+                .btnBgColor(Color.GRAY)
+                // “确定”按钮文字颜色
+                .btnTextColor(Color.BLUE)
+                // 使用沉浸式状态栏
+                .statusBarColor(Color.parseColor("#3F51B5"))
+                // 返回图标ResId
+//                .backResId(android.support.v7.appcompat.R.drawable.abc_ic_ab_back_mtrl_am_alpha)
+                .backResId(R.mipmap.ic_launcher)
+                // 标题
+                .title("图片")
+                // 标题文字颜色
+                .titleColor(Color.WHITE)
+                // TitleBar背景色
+                .titleBgColor(Color.parseColor("#3F51B5"))
+                // 裁剪大小。needCrop为true的时候配置
+                .cropSize(1, 1, 1000, 1000)
+                .needCrop(true)
+                // 第一个是否显示相机，默认true
+                .needCamera(false)
+                // 最大选择图片数量，默认9
+                .maxNum(1)
+                .build();
+
+        // 跳转到图片选择器
+        ISNav.getInstance().toListActivity(this, config, REQUEST_LIST_CODE);
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -110,6 +179,17 @@ public class AddTelphoneNumberActivity extends BaseActivity implements View.OnCl
             Logger.d("selectedImage=" + selectedImage);
             Logger.d("picturePath=" + selectedPicturePath);
             doUploadImage(selectedPicturePath);
+        } else if (requestCode == REQUEST_CAMERA_CODE && resultCode == Activity.RESULT_OK && data != null) {
+            String path = data.getStringExtra("result"); // 图片地址
+            Logger.d("选择的图片 " + path);
+            doUploadImage(path);
+        } else if (requestCode == REQUEST_LIST_CODE && resultCode == Activity.RESULT_OK && data != null) {
+            ArrayList<String> pathList = data.getStringArrayListExtra("result");
+            if (pathList != null && pathList.size() > 0) {
+                String path = pathList.get(0);
+                Logger.d("选择的图片 " + path);
+                doUploadImage(path);
+            }
         }
     }
 
@@ -171,80 +251,18 @@ public class AddTelphoneNumberActivity extends BaseActivity implements View.OnCl
             ToastUtil.show("选择的图片不存在");
             return;
         }
-        Logger.d("压缩前图片大小：" + file.length() / 1024 + " K " + file.getPath());
+        Logger.d(file.getPath());
+        Logger.d("图片大小：" + file.length() / 1024 + " K " + file.getPath());
 
-        final String targetName = "mini_" + file.getName();
-        //获取缩略图后上传
-        Glide.with(this).load(file)
-                .asBitmap()
-                .thumbnail(0.9f)//只看缩略图
-                .into(new SimpleTarget<Bitmap>(500, 500) {
-
-                    /**
-                     * 第一次完成，是缩略图，第二次原图，只保存第一次就可以了
-                     */
-                    boolean hasSave = false;
-
-                    @Override
-                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                        if (!hasSave) {
-                            hasSave = true;
-                            File mini = saveBitmap(resource, targetName, Bitmap.CompressFormat.JPEG, 90);
-                            Logger.d(mini.getPath());
-                            Logger.d("压缩后图片大小：" + mini.length() / 1024 + " K " + mini.getPath());
-
-                            String key = "pic_" + Constants.USER_NAME + "_" + System.currentTimeMillis() + getExtension(targetName);
-                            String token = getToken(key);
-                            if (token == null) {
-                                ToastUtil.show("获取token失败");
-                                return;
-                            }
-                            uploadFile(key, token, mini);
-                            ToastUtil.show("正在上传图片");
-                        }
-                    }
-                });
-
-
-//        String key = "pic_" + System.currentTimeMillis() + getExtension(imagePath);
-//        String token = getToken(key);
-//        if (token == null) {
-//            ToastUtil.show("获取token失败");
-//            return;
-//        }
-//        uploadFile(key, token, file);
-//        ToastUtil.show("正在上传图片");
-    }
-
-
-    /**
-     * 将Bitmap以指定格式保存到指定路径
-     *
-     * @param bitmap
-     * @param name
-     * @param format
-     */
-    public File saveBitmap(Bitmap bitmap, String name, Bitmap.CompressFormat format, int quality) {
-        // 创建一个位于SD卡上的文件
-        File file = new File(Environment.getExternalStorageDirectory() + File.separator + "012", name);
-        if (!file.getParentFile().exists()) {
-            Logger.d("创建文件" + file.getParentFile());
-            file.getParentFile().mkdirs();
+        String key = "pic_" + Constants.USER_NAME + "_" + System.currentTimeMillis() + getExtension(file.getName());
+        String token = getToken(key);
+        if (token == null) {
+            ToastUtil.show("获取token失败");
+            return;
         }
-        FileOutputStream out = null;
-        try {
-            // 打开指定文件输出流
-            out = new FileOutputStream(file);
-            // 将位图输出到指定文件
-            bitmap.compress(format, quality, out);
-            out.close();
-            return file;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+        uploadFile(key, token, file);
+        ToastUtil.show("正在上传图片");
     }
-
 
     /**
      * 获取文件后缀名
