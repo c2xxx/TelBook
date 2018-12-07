@@ -9,6 +9,7 @@ import com.chen.telbook.BuildConfig;
 import com.chen.telbook.bean.UpdateBean;
 import com.chen.telbook.constants.Constants;
 import com.chen.telbook.utils.AppConfig;
+import com.chen.telbook.utils.HttpUtil;
 import com.vector.update_app.UpdateAppBean;
 import com.vector.update_app.UpdateAppManager;
 import com.vector.update_app.UpdateCallback;
@@ -26,6 +27,7 @@ public class UpdateHelper {
         updateHelper.doCheckUpdate(activity, Constants.checkUpdata + "?t=" + System.currentTimeMillis());
 
     }
+
     /**
      * 检查升级
      */

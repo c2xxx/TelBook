@@ -3,6 +3,6 @@
   "isUpdate": true,
   "apkUrl": "https://raw.githubusercontent.com/c2xxx/TelBook/develop/app/src/main/java/com/chen/telbook/apk/telbook.apk",
   "versionName": "V1.0.1",
-  "versionCode": 3,
+  "versionCode": 2,
   "updateContent": "基本功能重新梳理"
 }

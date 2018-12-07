@@ -12,6 +12,7 @@ import com.chen.libchen.Logger;
 import com.chen.libchen.ToastUtil;
 import com.chen.telbook.BuildConfig;
 import com.chen.telbook.R;
+import com.chen.telbook.constants.Constants;
 import com.chen.telbook.helper.UpdateHelper;
 import com.chen.telbook.utils.PermissionHelper;
 
@@ -25,6 +26,8 @@ import butterknife.OnClick;
 public class MoreActivity extends BaseActivity {
     @BindView(R.id.tv_version)
     TextView tvVersion;
+    @BindView(R.id.tv_user_name)
+    TextView tvUserName;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -35,6 +38,7 @@ public class MoreActivity extends BaseActivity {
         String version = BuildConfig.VERSION_NAME;
         int versionCode = BuildConfig.VERSION_CODE;
         tvVersion.setText("当前版本：" + version + "(" + versionCode + ")");
+        tvUserName.setText("当前用户名：" + Constants.USER_NAME);
     }
 
     //检查权限是否齐全

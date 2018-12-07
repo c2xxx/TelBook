@@ -103,6 +103,7 @@ public class BaseRequest {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                Logger.d("onResponse 1"+Thread.currentThread().getName());
                 InputStream is = null;
                 byte[] buf = new byte[2048];
                 int len = 0;
@@ -110,11 +111,13 @@ public class BaseRequest {
                 // 储存下载文件的目录
                 String savePath = path;
                 try {
+                    Logger.d("onResponse 2");
                     is = response.body().byteStream();
                     long total = response.body().contentLength();
                     File file = new File(savePath, fileName);
                     fos = new FileOutputStream(file);
                     long sum = 0;
+                    Logger.d("onResponse 3");
                     while ((len = is.read(buf)) != -1) {
                         fos.write(buf, 0, len);
                         sum += len;
@@ -123,9 +126,11 @@ public class BaseRequest {
                         fileCallback.progress(progress);
                     }
                     fos.flush();
+                    Logger.d("onResponse 4");
                     // 下载完成
                     fileCallback.onResponse(file);
                 } catch (Exception e) {
+                    Logger.d("onResponse 5");
                     fileCallback.onFailure(e);
                 } finally {
                     try {
