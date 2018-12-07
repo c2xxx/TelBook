@@ -2,14 +2,15 @@ package com.chen.telbook.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.chen.libchen.Logger;
 import com.chen.telbook.R;
 import com.chen.telbook.bean.TelNum;
+import com.chen.telbook.helper.QiNiuImageSize;
 import com.chen.telbook.utils.ImageGlide;
 
 import java.util.List;
@@ -84,11 +85,8 @@ public class TelNumAdapter extends RecyclerView.Adapter<TelNumAdapter.ViewHolder
             tvTel.setText(telNum.getTel());
 
             String imgUrl = telNum.getImg();
-            if (!TextUtils.isEmpty(imgUrl)) {
-                if (imgUrl.indexOf("clouddn.com") != -1 && imgUrl.indexOf("?") == -1) {
-                    imgUrl = imgUrl + "?imageView2/2/w/300/h/300/q/100";
-                }
-            }
+            imgUrl = QiNiuImageSize.format(imgUrl);
+            Logger.d("图片地址：" + imgUrl);
             ImageGlide.show(mContext, imgUrl, ivImg);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

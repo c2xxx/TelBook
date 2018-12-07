@@ -86,6 +86,26 @@ public class MainActivity extends BaseActivity {
         readHelper.readText(" ");//目的是初始化一次
         checkNewMissCall();
         UpdateHelper.checkUpdateHomePage(this);
+        checkPermission();
+    }
+
+    private void checkPermission() {
+        rvMain.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (isForeground()) {
+                    PermissionHelper.requestAll(MainActivity.this);
+                }
+            }
+        }, 1000);
+        rvMain.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (isForeground()) {
+                    PermissionHelper.checkAlertWindow(MainActivity.this);
+                }
+            }
+        }, 5000);
     }
 
     /**
@@ -338,6 +358,7 @@ public class MainActivity extends BaseActivity {
         if (System.currentTimeMillis() - lastReadTime > 60 * 1000 * 3) {
             loadRemoteData();
         }
+
     }
 
     @Override

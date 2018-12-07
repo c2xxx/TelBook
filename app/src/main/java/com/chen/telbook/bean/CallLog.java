@@ -11,7 +11,8 @@ public class CallLog extends TelNum {
     public static final int CALL_IN = 1;
     public static final int CALL_OUT = 2;
     public static final int CALL_IN_FAIL = 3;
-    public static final int CALL_REFUSE = 9;
+    public static final int CALL_REFUSE_5 = 5;
+    public static final int CALL_REFUSE_9 = 9;
 
     private int type;
     private long date;

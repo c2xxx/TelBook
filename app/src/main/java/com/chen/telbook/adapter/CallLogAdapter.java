@@ -9,9 +9,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.chen.libchen.Logger;
 import com.chen.telbook.R;
 import com.chen.telbook.bean.CallLog;
+import com.chen.telbook.helper.QiNiuImageSize;
 import com.chen.telbook.utils.ImageGlide;
 
 import java.text.SimpleDateFormat;
@@ -101,22 +101,23 @@ public class CallLogAdapter extends RecyclerView.Adapter<CallLogAdapter.ViewHold
             tvTel.setText(telNum.getTel());
 
             String imgUrl = telNum.getImg();
-            if (!TextUtils.isEmpty(imgUrl)) {
-                if (imgUrl.indexOf("clouddn.com") != -1 && imgUrl.indexOf("?") == -1) {
-                    imgUrl = imgUrl + "?imageView2/2/w/300/h/300/q/100";
-                }
-            }
+            imgUrl = QiNiuImageSize.format(imgUrl);
             ImageGlide.show(mContext, imgUrl, ivImg);
             SimpleDateFormat sdf = new SimpleDateFormat("MM月dd日 HH:mm");
             tvTime.setText(sdf.format(telNum.getDate()));
-            tvType.setText(("" + telNum.getType()).replace("1", "来电").replace("2", "去电").replace("3", "未接来电").replace("9", "拒接"));
+            tvType.setText(("" + telNum.getType())
+                    .replace("1", "来电")
+                    .replace("2", "去电")
+                    .replace("3", "未接来电")
+                    .replace("5", "拒接")
+                    .replace("9", "拒接"));
             String imgType = null;
             int textColor = Color.WHITE;
             if (telNum.getType() == 3) {
 //                tvDuring.setText("响铃次数：" + telNum.getRingTimes());
                 textColor = Color.RED;
                 imgType = "file:///android_asset/img/call_in_fail.png";
-            } else if (telNum.getType() == 9) {
+            } else if (telNum.getType() == 5 || telNum.getType() == 9) {
                 tvDuring.setText("");
                 imgType = "file:///android_asset/img/call_in_refuse.png";
             } else {

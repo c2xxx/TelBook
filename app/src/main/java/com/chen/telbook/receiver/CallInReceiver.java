@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.telephony.TelephonyManager;
 
 import com.chen.libchen.Logger;
-import com.chen.telbook.window.ToastMessage;
+import com.chen.telbook.window.FloatWindow;
 
 /**
  * Created by ChenHui on 2016/12/21.
@@ -43,10 +43,12 @@ public class CallInReceiver extends BroadcastReceiver {
     }
 
     private void showNumber(String number) {
-        ToastMessage.getInstance().showNumber(number);
+//        ToastMessage.getInstance().showNumber(number);
+        FloatWindow.showNumber(number);
     }
 
     private void dismiss() {
-        ToastMessage.getInstance().dismiss();
+//        ToastMessage.getInstance().dismiss();
+        FloatWindow.dismiss();
     }
 }

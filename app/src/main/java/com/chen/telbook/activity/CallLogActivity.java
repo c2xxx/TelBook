@@ -143,7 +143,8 @@ public class CallLogActivity extends BaseActivity {
                     sb.append(" 通话时长" + callLog.getDuringString());
                 }
                 break;
-            case CallLog.CALL_REFUSE:
+            case CallLog.CALL_REFUSE_5:
+            case CallLog.CALL_REFUSE_9:
                 sb.append(" 挂断了" + name + "的电话");
                 break;
         }

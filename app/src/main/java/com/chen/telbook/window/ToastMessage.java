@@ -125,37 +125,7 @@ public class ToastMessage {
         vh.init(footbar);
         footbar.setTag(vh);
         footbar.setClickable(false);
-
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-//        WindowManager.LayoutParams params = new WindowManager.LayoutParams();
-//
-//        // 设置window type
-//        params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
-//        /*
-//         * 如果设置为params.type = WindowManager.LayoutParams.TYPE_PHONE;
-//         * 那么优先级会降低一些, 即拉下通知栏不可见
-//         */
-//
-//        params.format = PixelFormat.RGBA_8888; // 设置图片格式，效果为背景透明
-//
-////         设置Window flag
-//        params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-//                | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-//                | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;
-//        /*
-//         * 下面的flags属性的效果形同“锁定”。
-//         * 悬浮窗不可触摸，不接受任何事件,同时不影响后面的事件响应。
-//        wmParams.flags=          LayoutParams.FLAG_NOT_TOUCH_MODAL
-//                               | LayoutParams.FLAG_NOT_FOCUSABLE
-//                               | LayoutParams.FLAG_NOT_TOUCHABLE;
-//         */
-//
-//        // 设置悬浮窗的长得宽
-//        params.width = WindowManager.LayoutParams.MATCH_PARENT;
-//        params.height = WindowManager.LayoutParams.WRAP_CONTENT;
-//
-//        int dimen100 = context.getResources().getDimensionPixelSize(R.dimen.dimen_100dp);
-//        params.y = -dimen100 * 2;
         footbar.setVisibility(View.GONE);
         footbar.setAlpha(0.8f);
         try {

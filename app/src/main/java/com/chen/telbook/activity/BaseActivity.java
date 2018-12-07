@@ -7,4 +7,21 @@ import android.support.v7.app.AppCompatActivity;
  */
 
 public class BaseActivity extends AppCompatActivity {
+    int count = 0;
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        count--;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        count++;
+    }
+
+    protected boolean isForeground() {
+        return count > 0;
+    }
 }
