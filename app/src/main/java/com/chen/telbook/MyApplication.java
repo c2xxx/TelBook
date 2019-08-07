@@ -22,7 +22,6 @@ public class MyApplication extends Application {
 
         SpeechUtility.createUtility(this, SpeechConstant.APPID + "=565807f9");//讯飞语音注册
 
-//        FileUtil.init(context);
         Constants.initUserName();
         LibChenInit.init(context);
     }
