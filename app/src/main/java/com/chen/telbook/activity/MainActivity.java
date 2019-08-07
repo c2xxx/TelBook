@@ -29,14 +29,18 @@ import com.chen.telbook.adapter.TelNumAdapter;
 import com.chen.telbook.bean.TelNum;
 import com.chen.telbook.constants.Constants;
 import com.chen.telbook.helper.CheckNewMissedCall;
+import com.chen.telbook.helper.StatisticsHelper;
 import com.chen.telbook.helper.TelBookManager;
 import com.chen.telbook.helper.UpdateHelper;
 import com.chen.telbook.helper.VoicePlay;
 import com.chen.telbook.helper.XunFeiVoiceReadHelper;
 import com.chen.telbook.utils.PermissionHelper;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -148,6 +152,22 @@ public class MainActivity extends BaseActivity {
                 telAdapter.notifyDataSetChanged();
             }
         });
+
+        onStatistics();
+    }
+
+    /**
+     * 统计
+     */
+    private void onStatistics() {
+        StatisticsHelper helper = new StatisticsHelper();
+        helper.publishEvent(this, "HOME_ACTIVITY_OPEN");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Map<String, String> map = new HashMap<>();
+        map.put("userName", Constants.USER_NAME);
+        map.put("time", "" + sdf.format(System.currentTimeMillis()));
+        map.put("event", "openHomeActivity");
+        helper.publishEvent(this, "HOME_ACTIVITY_OPEN_DETAIL", map);
     }
 
 
