@@ -33,6 +33,8 @@ public class TelBookManager {
         loadRemoteData();
     }
 
+    boolean dataChanged = false;
+
     public static TelBookManager getInstance() {
         return instance;
     }
@@ -66,6 +68,12 @@ public class TelBookManager {
     }
 
 
+    public void loadRemoteDataIfDataChanged() {
+        if (dataChanged) {
+            loadRemoteData();
+        }
+    }
+
     public void loadRemoteData() {
         String url = Constants.urlXml + "?t=" + System.currentTimeMillis();
         Logger.d("url=" + url);
@@ -82,6 +90,7 @@ public class TelBookManager {
                         SharedPerferencesHelper.save(key, strBase64);
                         changeData(list, "远程数据");
                     }
+                    dataChanged = false;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -169,6 +178,7 @@ public class TelBookManager {
      */
     private void saveCurrentData() {
         Logger.d("保存时候的人数" + telList.size());
+        dataChanged = true;
         try {
             String xmlContent = TelBookXmlHelper.writeToString(telList);
             File file = File.createTempFile("xx" + System.currentTimeMillis(), "xml");

@@ -38,6 +38,12 @@ public class MoreActivity extends BaseActivity {
         String version = BuildConfig.VERSION_NAME;
         int versionCode = BuildConfig.VERSION_CODE;
         tvVersion.setText("当前版本：" + version + "(" + versionCode + ")");
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         tvUserName.setText("当前用户名：" + Constants.USER_NAME);
     }
 

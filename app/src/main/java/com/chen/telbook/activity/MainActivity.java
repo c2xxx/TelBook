@@ -21,6 +21,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.chen.libchen.Logger;
 import com.chen.libchen.ToastUtil;
 import com.chen.telbook.R;
 import com.chen.telbook.adapter.OnItemClick;
@@ -93,7 +94,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public void run() {
                 if (isForeground()) {
-                    PermissionHelper.checkAlertWindow(MainActivity.this);
+//                    PermissionHelper.checkAlertWindow(MainActivity.this);
                 }
             }
         }, 5000);
@@ -143,7 +144,6 @@ public class MainActivity extends BaseActivity {
         rvMain.setItemAnimator(new DefaultItemAnimator());
 
         telAdapter.setData(TelBookManager.getInstance().getList());
-        loadRemoteData();
 
         TelBookManager.getInstance().addListener(new TelBookManager.OnDataChange() {
             @Override
@@ -177,10 +177,6 @@ public class MainActivity extends BaseActivity {
         TelBookManager.getInstance().clearListener();
     }
 
-    private void loadRemoteData() {
-        TelBookManager.getInstance().loadRemoteData();
-    }
-
     private void doSelectedPosition(int position) {
         if (telList != null && telList.size() > position) {
             TelNum tel = telList.get(position);
@@ -212,6 +208,7 @@ public class MainActivity extends BaseActivity {
                 return;
             }
             startActivity(intent);
+            Logger.d("拨号给" + tel);
         } else {
             ToastUtil.show("没有拨号权限！");
         }
@@ -322,7 +319,12 @@ public class MainActivity extends BaseActivity {
             Intent intent3 = new Intent(MainActivity.this, LoginByNameActivity.class);
             startActivityForResult(intent3, REQUEST_RENAME);
         }
-        loadRemoteData();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        TelBookManager.getInstance().loadRemoteDataIfDataChanged();
     }
 
     @Override
