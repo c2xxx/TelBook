@@ -12,8 +12,9 @@ public class Constants {
     public static final String spaceName = "telbook";
     public static final String accressKey = "VZtEbyKjgZSANKSfObSqXMeaRocby1zf5wseyF_V";
     public static final String secretKey = "_TaNRS6TEOhrSWV_tq00s1JJ_HlkhOfhB9gRb70Z";
-    public static final String HOST = "http://telbook.qiniu.happy1day.com/";
-    public static String USER_NAME = "";
+    public static final String HOST = "https://gitee.com/c2c9/res/raw/abc/telbook/";
+    public static String USER_NAME = "llx";
+    public static boolean canUseModify = false;//是否可以修改
     public static String USER_BOOK_FILE_NAME = "user_" + USER_NAME + ".xml";
     public static String urlXml = HOST + USER_BOOK_FILE_NAME;
     /**
@@ -28,6 +29,10 @@ public class Constants {
         SharedPerferencesHelper.save(SharedPerferencesHelper.USER_NAME, userName);
     }
 
+    public static String getUserXml() {
+        return urlXml;
+    }
+
 
     public static void initUserName() {
         String userName = SharedPerferencesHelper.read(SharedPerferencesHelper.USER_NAME);
@@ -37,6 +42,9 @@ public class Constants {
     }
 
     public static boolean isUserNameEmpty() {
+        if (!Constants.canUseModify) {
+            return false;
+        }
         return "default".equalsIgnoreCase(USER_NAME) || TextUtils.isEmpty(USER_NAME);
     }
 }

@@ -229,10 +229,12 @@ public class MainActivity extends BaseActivity {
          * 4、文本，菜单的显示文本
          */
 
-        menu.add(Menu.NONE, Menu.FIRST + 1, 1, "添加");
-        menu.add(Menu.NONE, Menu.FIRST + 2, 2, "删除");
-        menu.add(Menu.NONE, Menu.FIRST + 3, 3, "更多");
-        return true;
+        if (Constants.canUseModify) {
+            menu.add(Menu.NONE, Menu.FIRST + 1, 1, "添加");
+            menu.add(Menu.NONE, Menu.FIRST + 2, 2, "删除");
+            menu.add(Menu.NONE, Menu.FIRST + 3, 3, "更多");
+        }
+        return false;
     }
 
     @Override

@@ -75,7 +75,7 @@ public class TelBookManager {
     }
 
     public void loadRemoteData() {
-        String url = Constants.urlXml + "?t=" + System.currentTimeMillis();
+        String url = Constants.getUserXml() + "?t=" + System.currentTimeMillis();
         Logger.d("url=" + url);
         NetCallback callback = new NetCallback() {
             @Override
