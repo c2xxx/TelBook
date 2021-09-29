@@ -21,8 +21,8 @@ android {
         applicationId "com.chen.telbook"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 3
-        versionName "1.0.3"
+        versionCode 5
+        versionName "1.0.5"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     //签名信息
